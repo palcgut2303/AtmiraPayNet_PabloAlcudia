@@ -47,6 +47,8 @@ namespace AtmitaPayNet.API.Contexto
         }
 
         public DbSet<PaymentLetter> PaymentLetters { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
 
     }
 }

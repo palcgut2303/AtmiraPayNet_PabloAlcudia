@@ -26,7 +26,7 @@ namespace AtmitaPayNet.API.Models
         //Data of the Payment Letter
         public int PaymentAmount { get; set; }
         public string? PaymentCurrency { get; set; }
-       
-       
+        public string? PDF { get; set; }
+        public string? Status { get; set; }
     }
 }

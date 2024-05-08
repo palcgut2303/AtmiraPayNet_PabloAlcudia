@@ -1,6 +1,8 @@
 ﻿using AtmiraPayNet.Shared;
+using AtmiraPayNet.Shared.EntityDTO;
 using AtmitaPayNet.API.Models;
 using Azure.Identity;
+using System.Text.Json;
 
 namespace AtmitaPayNet.API.Mapper
 {
@@ -9,12 +11,15 @@ namespace AtmitaPayNet.API.Mapper
         public static PaymentLetterDTO toPaymentLetterDTO(this PaymentLetter model)
         {
 
-
             return new PaymentLetterDTO
             {
                 Id = model.Id,
-                //Hacer que la direccion sea el json que se pase al DTO
-                Address = model.Address.ToString(),
+                Address = new AddressDTO
+                {
+                    CP = model.Address.CP,
+                    NumberStreet = model.Address.NumberStreet,
+                    Street = model.Address.Street
+                },
                 DestinationBankId = model.DestinationBankId,
                 OriginBankId = model.OriginBankId,
                 InterBankId = model.InterBankId,

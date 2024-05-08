@@ -1,0 +1,106 @@
+﻿@page "/register"
+@using AtmiraPayNet.Client.Services
+@using AtmiraPayNet.Shared.AccountDTO
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+
+<h3>Registrarse</h3>
+<EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
+    <DataAnnotationsValidator />
+    @* <ValidationSummary /> *@
+
+    @if (ShowErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
+
+    <div class="d-flex flex-row align-items-center mb-4">
+        <i class="bi bi-person-fill me-3"></i>
+        <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <InputText Id="username" class="form-control" @bind-Value="RegisterModel.Username" />
+            <ValidationMessage For="@(() => RegisterModel.Username)" />
+            <label class="form-label" for="form3Example1c">Username</label>
+        </div>
+    </div>
+
+    <div class="d-flex flex-row align-items-center mb-4">
+        <i class="bi bi-person-fill me-3"></i>
+        <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <InputText Id="fullname" class="form-control" @bind-Value="RegisterModel.FullName" />
+            <ValidationMessage For="@(() => RegisterModel.FullName)" />
+            <label class="form-label" for="form3Example1c">FullName</label>
+        </div>
+    </div>
+
+
+    <div class="d-flex flex-row align-items-center mb-4">
+        <i class="bi bi-envelope-at-fill me-3"></i>
+        <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
+            <ValidationMessage For="@(() => RegisterModel.Email)" />
+            <label class="form-label" for="form3Example3c">Email</label>
+        </div>
+    </div>
+
+    <div class="d-flex flex-row align-items-center mb-4">
+        <i class="bi bi-lock-fill me-3"></i>
+        <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
+            <ValidationMessage For="@(() => RegisterModel.Password)" />
+            <label class="form-label" for="form3Example4c">Password</label>
+        </div>
+    </div>
+
+    <div class="d-flex flex-row align-items-center mb-4">
+        <i class="bi bi-lock-fill me-3"></i>
+        <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <InputDate Id="birthday" class="form-control" @bind-Value="RegisterModel.BirthDay" />
+            <ValidationMessage For="@(() => RegisterModel.BirthDay)" />
+            <label class="form-label" for="form3Example4c">Dia de Nacimiento</label>
+        </div>
+    </div>
+    <span><a href="login">¿Tienes una cuenta?, Inicia sesión aquí</a></span>
+
+    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+
+        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg">Registrarse</button>
+    </div>
+
+
+</EditForm>
+@code {
+    private RegisterDTO RegisterModel = new RegisterDTO();
+    private bool ShowErrors;
+    private IEnumerable<string>? Errors;
+
+    protected override async Task OnInitializedAsync()
+    {
+       RegisterModel.BirthDay = DateTime.Now;
+
+    }
+
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Register(RegisterModel);
+
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Errors = result.Errors;
+            ShowErrors = true;
+        }
+    }
+
+}

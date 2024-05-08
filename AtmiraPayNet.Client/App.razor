@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <CascadingAuthenticationState>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </CascadingAuthenticationState>
+    </NotFound>
+</Router>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private async Task LogUserAuthenticationState()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+
+        if (user.Identity!.IsAuthenticated)
+        {
+            // Si hay un usuario autenticado, redirige a la página de inicio.
+            NavigationManager.NavigateTo("/home");
+        }
+        else
+        {
+            // Si no hay usuario autenticado, redirige a la página de inicio de sesión, por ejemplo.
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+}

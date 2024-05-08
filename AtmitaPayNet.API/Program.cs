@@ -52,6 +52,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IPaymentLetterRepository, PaymentLetterRepository>();
+builder.Services.AddTransient<IBankAccountRepository, BankAccountRepository>();
+builder.Services.AddTransient<IBankRepository, BankRepository>();
+builder.Services.AddTransient<IPDFRepository, PdfRepository>();
 
 
 builder.Services.AddIdentity<User, IdentityRole>()

@@ -116,7 +116,9 @@ namespace AtmitaPayNet.API.Controllers
                 {
                     UserName = model.Username,
                     Email = model.Email,
-                    FullName = model.FullName
+                    FullName = model.FullName,
+                    _dateOfBirth = model.BirthDay
+                    
                 };
 
                 var createdUser = await _userManager.CreateAsync(usuario, model.Password);

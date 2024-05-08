@@ -1,9 +1,14 @@
 ﻿namespace AtmitaPayNet.API.Models
 {
-    public class IBAN(string value)
+    public class IBAN
     {
 
-        public string IBANBankAccount { get; set; } = value;
+        public IBAN(string value)
+        {
+            IBANBankAccount = value;
+        }
+
+        public string IBANBankAccount { get; set; }
 
     }
 }

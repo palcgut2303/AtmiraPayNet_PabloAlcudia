@@ -18,5 +18,7 @@ namespace AtmiraPayNet.Shared.AccountDTO
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        public DateTime BirthDay { get; set; }
     }
 }

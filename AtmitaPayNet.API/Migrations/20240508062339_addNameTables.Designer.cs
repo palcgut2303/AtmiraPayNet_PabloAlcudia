@@ -4,6 +4,7 @@ using AtmitaPayNet.API.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AtmitaPayNet.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240508062339_addNameTables")]
+    partial class addNameTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,16 +89,10 @@ namespace AtmitaPayNet.API.Migrations
                     b.Property<int>("OriginBankId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PDF")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("PaymentAmount")
                         .HasColumnType("int");
 
                     b.Property<string>("PaymentCurrency")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

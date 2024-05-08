@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtmitaPayNet.API", "AtmitaPayNet.API\AtmitaPayNet.API.csproj", "{478E3AD8-9900-48A8-9567-CC5E80A02CAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtmitaPayNet.API", "AtmitaPayNet.API\AtmitaPayNet.API.csproj", "{478E3AD8-9900-48A8-9567-CC5E80A02CAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtmiraPayNet.Shared", "AtmiraPayNet.Shared\AtmiraPayNet.Shared.csproj", "{2B23E9C8-799F-4E66-B0BD-246CDA43C572}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtmiraPayNet.Shared", "AtmiraPayNet.Shared\AtmiraPayNet.Shared.csproj", "{2B23E9C8-799F-4E66-B0BD-246CDA43C572}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtmiraPayNet.Client", "AtmiraPayNet.Client\AtmiraPayNet.Client.csproj", "{D418BE51-91BC-4089-8056-3C76CFD6AA80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2B23E9C8-799F-4E66-B0BD-246CDA43C572}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B23E9C8-799F-4E66-B0BD-246CDA43C572}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B23E9C8-799F-4E66-B0BD-246CDA43C572}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D418BE51-91BC-4089-8056-3C76CFD6AA80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D418BE51-91BC-4089-8056-3C76CFD6AA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D418BE51-91BC-4089-8056-3C76CFD6AA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D418BE51-91BC-4089-8056-3C76CFD6AA80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
