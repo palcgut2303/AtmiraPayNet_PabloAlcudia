@@ -15,7 +15,8 @@ namespace AtmiraPayNet.Shared.AccountDTO
 
         public string Email { get; set; }
 
-        public string Rol { get; set; }
+        public string FullName { get; set; }
 
+        public DateTime birthday { get; set; }
     }
 }

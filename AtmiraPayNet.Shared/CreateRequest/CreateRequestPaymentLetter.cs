@@ -17,7 +17,6 @@ namespace AtmiraPayNet.Shared.CreateRequest
         public string Street { get; set; }
         public int NumberStreet { get; set; }
         public int PayAmount { get; set; }
-        public string PayCurrency { get; set; }
 
         public string DestinationAccountIBAN { get; set; }
 

@@ -25,7 +25,6 @@ namespace AtmiraPayNet.Shared.EntityDTO
 
         //Data of the Payment Letter
         public int PaymentAmount { get; set; }
-        public string? PaymentCurrency { get; set; }
 
     }
 }

@@ -52,7 +52,6 @@ namespace AtmitaPayNet.API.Repositories
                 OriginBankId = idOriginBank,
                 InterBankId = idInterBank != 0 ? idInterBank : null,
                 PaymentAmount = model.PayAmount,
-                PaymentCurrency = model.PayCurrency,
                 Status = model.Status
             };
 

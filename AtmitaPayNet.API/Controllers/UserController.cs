@@ -1,4 +1,5 @@
-﻿using AtmiraPayNet.Shared.AccountDTO;
+﻿using AtmiraPayNet.Shared;
+using AtmiraPayNet.Shared.AccountDTO;
 using AtmitaPayNet.API.Contexto;
 using AtmitaPayNet.API.Interfaces;
 using AtmitaPayNet.API.Models;
@@ -103,8 +104,6 @@ namespace AtmitaPayNet.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
-            
-
             try
             {
                 if (!ModelState.IsValid)
@@ -142,8 +141,6 @@ namespace AtmitaPayNet.API.Controllers
             {
                 return StatusCode(500, e.Message);
             }
-
-
         }
 
         [HttpGet("AllFields")]
@@ -154,19 +151,21 @@ namespace AtmitaPayNet.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> ListarUsuarios()
+        public async Task<IActionResult> ListarUsuarios()
         {
             var usuarios = await _userManager.Users
                 .Select(u => new UserDTO
                 {
                     Id = u.Id,
                     Username = u.UserName,
-                    Email = u.Email
+                    Email = u.Email,
+                    FullName = u.FullName,
+                    birthday = u._dateOfBirth
                     // Agrega otros campos que desees devolver
                 })
                 .ToListAsync();
 
-            return Ok(usuarios);
+            return Ok(new UserListResult { Successful = true, ListUser = usuarios});
         }
 
 
