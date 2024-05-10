@@ -1,4 +1,5 @@
 ﻿
+using AtmiraPayNet.Client.Interfaces;
 using AtmiraPayNet.Shared;
 using System.Net.Http.Json;
 using System.Text;

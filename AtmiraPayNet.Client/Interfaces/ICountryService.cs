@@ -1,6 +1,6 @@
 ﻿using AtmiraPayNet.Shared;
 
-namespace AtmiraPayNet.Client.Services
+namespace AtmiraPayNet.Client.Interfaces
 {
     public interface ICountryService
     {

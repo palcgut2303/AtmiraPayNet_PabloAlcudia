@@ -1,9 +1,11 @@
-﻿using AtmitaPayNet.API.Models;
+﻿using AtmiraPayNet.Shared.EntityDTO;
+using AtmitaPayNet.API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AtmitaPayNet.API.Interfaces
 {
     public interface IPDFRepository
     {
-        void CrearPDF(PaymentLetter payment);
+        string GeneratePdf(PaymentLetterDTO paymentLetter);
     }
 }

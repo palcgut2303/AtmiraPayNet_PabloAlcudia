@@ -26,5 +26,10 @@ namespace AtmiraPayNet.Shared.EntityDTO
         //Data of the Payment Letter
         public int PaymentAmount { get; set; }
 
+        public string? Status { get; set; }
+
+        public DateTime? Date { get; set; }
+
+        public string? PDF { get; set; }
     }
 }

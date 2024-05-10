@@ -1,13 +1,15 @@
 ﻿@page "/payment-letter"
-@using AtmiraPayNet.Client.Services
+@using AtmiraPayNet.Client.Interfaces
 @using AtmiraPayNet.Shared
 @using AtmiraPayNet.Shared.CreateRequest
+@using AtmiraPayNet.Client.Services
 
 @inject ICountryService countryService
+@inject IPaymentLetterService paymentLetterService
 
 <h3>Crear emisión de carta de pago</h3>
 
-<EditForm Model="@paymentLetterModel" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@paymentLetterModel" OnValidSubmit="@Generate">
     <DataAnnotationsValidator />
 
     <div class="form-group">
@@ -115,7 +117,7 @@
 
     
     <div class="mt-2 mb-2">
-        <button type="submit" class="btn btn-primary">Generar</button>
+        <button type="submit" class="btn btn-primary" @onclick="Generate">Generar</button>
         <button type="submit" class="btn btn-secondary">Mandar a Borradores</button>
     </div>
     
@@ -181,10 +183,38 @@
         return "No encontrado";
     }
 
-    private void HandleValidSubmit()
+    private async Task Generate()
     {
-        
-        
+        paymentLetterModel.Status = "GENERADO";
+
+        var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+
+        if (result.Successful)
+        {
+
+
+        }
+        else
+        {
+            
+        }
+    }
+
+    private async Task SaveToDraft()
+    {
+        paymentLetterModel.Status = "DRAFT";
+
+        var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+
+        if (result.Successful)
+        {
+
+
+        }
+        else
+        {
+
+        }
 
     }
 }

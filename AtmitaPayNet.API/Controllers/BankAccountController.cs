@@ -26,10 +26,10 @@ namespace AtmitaPayNet.API.Controllers
 
             if (bankAccounts == null || bankAccounts.Count() == 0)
             {
-                return Ok(new ResponseAPI<List<BankAccountDTO>> { EsCorrecto = false, Mensaje = "No hay cuentas bancarias disponibles" });
+                return Ok(new ResponseAPI<List<BankAccountDTO>> { Successful = false, Menssage = "No hay cuentas bancarias disponibles" });
             }
 
-            return Ok(new ResponseAPI<List<BankAccountDTO>> { EsCorrecto = true, Valor = bankAccounts.ToList() });
+            return Ok(new ResponseAPI<List<BankAccountDTO>> { Successful = true, Value = bankAccounts.ToList() });
         }
 
         [HttpGet("{id}")]
@@ -39,10 +39,10 @@ namespace AtmitaPayNet.API.Controllers
 
             if (bankAccount == null)
             {
-                return Ok(new ResponseAPI<BankAccountDTO> { EsCorrecto = false, Mensaje = "No se encontró la cuenta bancaria" });
+                return Ok(new ResponseAPI<BankAccountDTO> { Successful = false, Menssage = "No se encontró la cuenta bancaria" });
             }
 
-            return Ok(new ResponseAPI<BankAccountDTO> { EsCorrecto = true, Valor = bankAccount });
+            return Ok(new ResponseAPI<BankAccountDTO> { Successful = true, Value = bankAccount });
         }
 
         [HttpPost]
@@ -52,10 +52,10 @@ namespace AtmitaPayNet.API.Controllers
 
             if (result == null)
             {
-                return Ok(new ResponseAPI<BankAccountDTO> { EsCorrecto = false, Mensaje = "No se pudo crear la cuenta bancaria" });
+                return Ok(new ResponseAPI<BankAccountDTO> { Successful = false, Menssage = "No se pudo crear la cuenta bancaria" });
             }
 
-            return Ok(new ResponseAPI<BankAccountDTO> { EsCorrecto = true, Valor = result.Valor });
+            return Ok(new ResponseAPI<BankAccountDTO> { Successful = true, Value = result.Value });
         }
 
     }

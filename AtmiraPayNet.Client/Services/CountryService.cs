@@ -1,4 +1,5 @@
-﻿using AtmiraPayNet.Shared;
+﻿using AtmiraPayNet.Client.Interfaces;
+using AtmiraPayNet.Shared;
 using System.Text.Json;
 
 namespace AtmiraPayNet.Client.Services

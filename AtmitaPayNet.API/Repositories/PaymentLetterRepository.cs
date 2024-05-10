@@ -6,6 +6,7 @@ using AtmitaPayNet.API.Interfaces;
 using AtmitaPayNet.API.Mapper;
 using AtmitaPayNet.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AtmitaPayNet.API.Repositories
 {
@@ -15,7 +16,7 @@ namespace AtmitaPayNet.API.Repositories
         private readonly ApplicationDbContext _contextDb;
         private readonly IPDFRepository _pdfRepository;
 
-        public PaymentLetterRepository(ApplicationDbContext contextDb,IPDFRepository pdfRepository)
+        public PaymentLetterRepository(ApplicationDbContext contextDb, IPDFRepository pdfRepository)
         {
             _contextDb = contextDb;
             this._pdfRepository = pdfRepository;
@@ -36,9 +37,14 @@ namespace AtmitaPayNet.API.Repositories
             var IBANInter = new IBAN(model.InterBankAccountIBAN);
             var IBANOrigin = new IBAN(model.OriginAccountIBAN);
 
-            var idDestinationBank = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANDestination).Select(x => x.Id).FirstOrDefaultAsync();
-            var idOriginBank = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANOrigin).Select(x => x.Id).FirstOrDefaultAsync();
-            var idInterBank = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANInter).Select(x => x.Id).FirstOrDefaultAsync();
+            var idDestinationBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANDestination).Select(x => x.Id).FirstOrDefaultAsync();
+            var idOriginBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANOrigin).Select(x => x.Id).FirstOrDefaultAsync();
+            var idInterBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANInter).Select(x => x.Id).FirstOrDefaultAsync();
+
+            if (idDestinationBankAccount == 0 || idOriginBankAccount == 0)
+            {
+                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "El Banco de origen o de destino no existe" };
+            }
 
             var paymentLetter = new PaymentLetter
             {
@@ -48,18 +54,24 @@ namespace AtmitaPayNet.API.Repositories
                     NumberStreet = model.NumberStreet,
                     Street = model.Street
                 },
-                DestinationBankId = idDestinationBank,
-                OriginBankId = idOriginBank,
-                InterBankId = idInterBank != 0 ? idInterBank : null,
+                DestinationBankId = idDestinationBankAccount,
+                OriginBankId = idOriginBankAccount,
+                InterBankId = idInterBankAccount != 0 ? idInterBankAccount : null,
                 PaymentAmount = model.PayAmount,
-                Status = model.Status
+                Status = model.Status,
+                Date = DateTime.Now
             };
 
+
+            //Generar PDF
+            var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO());
+
+            paymentLetter.PDF = pdf;
 
             _contextDb.PaymentLetters.Add(paymentLetter);
             await _contextDb.SaveChangesAsync();
 
-            return new ResponseAPI<PaymentLetterDTO> { EsCorrecto = true, Valor = paymentLetter.toPaymentLetterDTO() };
+            return new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = paymentLetter.toPaymentLetterDTO() };
         }
     }
 }

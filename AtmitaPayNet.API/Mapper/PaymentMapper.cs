@@ -23,7 +23,9 @@ namespace AtmitaPayNet.API.Mapper
                 DestinationBankId = model.DestinationBankId,
                 OriginBankId = model.OriginBankId,
                 InterBankId = model.InterBankId,
-                PaymentAmount = model.PaymentAmount
+                PaymentAmount = model.PaymentAmount,
+                PDF = model.PDF,
+                Date = model.Date,
             };
         }
     }

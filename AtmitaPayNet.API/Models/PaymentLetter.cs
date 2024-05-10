@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace AtmitaPayNet.API.Models
 {
+    
     public class PaymentLetter
     {
         public int Id { get; set; }
@@ -27,5 +28,7 @@ namespace AtmitaPayNet.API.Models
         public int PaymentAmount { get; set; }
         public string? PDF { get; set; }
         public string? Status { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }

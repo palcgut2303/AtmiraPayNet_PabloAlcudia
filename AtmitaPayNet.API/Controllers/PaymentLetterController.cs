@@ -37,14 +37,19 @@ namespace AtmitaPayNet.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateRequestPaymentLetter paymentLetterDTO)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "Datos incorrectos" });
+            }
+
             var result = await _paymentLetterRepository.Create(paymentLetterDTO);
 
             if (result == null)
             {
-                return Ok(new ResponseAPI<PaymentLetterDTO> { EsCorrecto = false, Mensaje = "No se pudo crear la carta de pago" });
+                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "No se pudo crear la carta de pago" });
             }
 
-            return Ok(new ResponseAPI<PaymentLetterDTO> { EsCorrecto = true, Valor = result.Valor });
+            return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = result.Value });
         }
 
 

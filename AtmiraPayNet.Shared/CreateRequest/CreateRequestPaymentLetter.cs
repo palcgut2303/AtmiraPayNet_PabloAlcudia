@@ -30,7 +30,7 @@ namespace AtmiraPayNet.Shared.CreateRequest
         public string InterBankName { get; set; }
 
         //public string Pdf { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
 
     }

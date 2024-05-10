@@ -42,7 +42,7 @@ namespace AtmitaPayNet.API.Repositories
             _contextDb.Banks.Add(bank);
             await _contextDb.SaveChangesAsync();
 
-            return new ResponseAPI<BankDTO> { EsCorrecto = true, Valor = bank.toBankDTO() };
+            return new ResponseAPI<BankDTO> { Successful = true, Value = bank.toBankDTO() };
         }
     }
 }

@@ -8,6 +8,7 @@ using AtmiraPayNet.Shared.AccountDTO;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
 using System.IdentityModel.Tokens.Jwt;
+using AtmiraPayNet.Client.Interfaces;
 
 namespace AtmiraPayNet.Client.Services
 {

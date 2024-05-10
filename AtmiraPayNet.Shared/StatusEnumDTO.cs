@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace AtmiraPayNet.Shared
 {
-    public class ResponseAPI<T>
+    public enum StatusEnumDTO
     {
-        public bool Successful { get; set; }
-        public T? Value { get; set; }
-        public string? Menssage { get; set; }
+        Generated,
+        Draft
     }
 }
