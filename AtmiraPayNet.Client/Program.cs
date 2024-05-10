@@ -19,6 +19,5 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
 builder.Services.AddTransient<IPaymentLetterService, PaymentLetterService>();
-
 builder.Services.AddSweetAlert2();
 await builder.Build().RunAsync();

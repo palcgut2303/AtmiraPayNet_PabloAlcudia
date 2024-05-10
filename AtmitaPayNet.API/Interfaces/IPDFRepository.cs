@@ -6,6 +6,6 @@ namespace AtmitaPayNet.API.Interfaces
 {
     public interface IPDFRepository
     {
-        string GeneratePdf(PaymentLetterDTO paymentLetter);
+        string GeneratePdf(PaymentLetterDTO paymentLetter, string bankAccountNameDestination, string bankAccountNameOrigin, string bankAccountNameInter);
     }
 }

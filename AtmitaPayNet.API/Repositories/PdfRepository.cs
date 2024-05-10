@@ -1,7 +1,6 @@
 ﻿using AtmiraPayNet.Shared.EntityDTO;
 using AtmitaPayNet.API.Interfaces;
 using AtmitaPayNet.API.Models;
-using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
@@ -11,7 +10,7 @@ namespace AtmitaPayNet.API.Repositories
 {
     public class PdfRepository : IPDFRepository
     {
-        public string GeneratePdf(PaymentLetterDTO paymentLetter)
+        public string GeneratePdf(PaymentLetterDTO paymentLetter,string bankAccountNameDestination,string bankAccountNameOrigin, string bankAccountNameInter)
         {
             try
             {
@@ -24,9 +23,9 @@ namespace AtmitaPayNet.API.Repositories
                             using (Document document = new Document(pdfDocument))
                             {
                                 document.Add(new Paragraph("Payment Letter Details:"));
-                                document.Add(new Paragraph($"Origin Bank ID: {paymentLetter.OriginBankId}"));
-                                document.Add(new Paragraph($"Destination Bank ID: {paymentLetter.DestinationBankId}"));
-                                document.Add(new Paragraph($"Inter Bank ID: {paymentLetter.InterBankId ?? 0}"));
+                                document.Add(new Paragraph($"Origin Bank Name: {bankAccountNameOrigin}"));
+                                document.Add(new Paragraph($"Destination Bank Name: {bankAccountNameDestination}"));
+                                document.Add(new Paragraph($"Inter Bank Name: {bankAccountNameInter ?? "No hay"}"));
                                 document.Add(new Paragraph($"Payment Amount: {paymentLetter.PaymentAmount}"));
                                 document.Add(new Paragraph($"Status: {paymentLetter.Status ?? "N/A"}"));
                                 document.Add(new Paragraph($"Date: {paymentLetter.Date}"));

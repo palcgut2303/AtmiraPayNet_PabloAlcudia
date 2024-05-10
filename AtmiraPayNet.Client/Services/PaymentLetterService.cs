@@ -33,11 +33,19 @@ namespace AtmiraPayNet.Client.Services
             var response = await _httpClient.PostAsJsonAsync("api/PaymentLetter",model);
             if (response.IsSuccessStatusCode)
             {
-                return null;
+                return new ResponseAPI<PaymentLetterDTO>
+                {
+                    Successful = true,
+                    Menssage = "Payment Letter created successfully",
+                };
             }
             else
             {
-                return null;
+                return new ResponseAPI<PaymentLetterDTO>
+                {
+                    Successful = false,
+                    Menssage = "Error, no se ha podido crear la carta de pago",
+                };
             }
         }
 

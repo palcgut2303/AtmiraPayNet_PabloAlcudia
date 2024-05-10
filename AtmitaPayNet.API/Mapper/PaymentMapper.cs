@@ -26,6 +26,7 @@ namespace AtmitaPayNet.API.Mapper
                 PaymentAmount = model.PaymentAmount,
                 PDF = model.PDF,
                 Date = model.Date,
+                Status = model.Status
             };
         }
     }

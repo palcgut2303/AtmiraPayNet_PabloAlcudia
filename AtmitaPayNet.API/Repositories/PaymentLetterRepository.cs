@@ -62,11 +62,31 @@ namespace AtmitaPayNet.API.Repositories
                 Date = DateTime.Now
             };
 
+            var bankAccountNameDestination = await _contextDb.BankAccounts.Where(x => x.Id == idDestinationBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
+            var bankAccountNameOrigin = await _contextDb.BankAccounts.Where(x => x.Id == idOriginBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
+            var bankAccountNameInter = idInterBankAccount != 0 ? await _contextDb.BankAccounts.Where(x => x.Id == idInterBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync() : null;
 
-            //Generar PDF
-            var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO());
+            if (bankAccountNameDestination == null || bankAccountNameOrigin == null)
+            {
+                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "El Banco de origen o de destino no existe" };
+            }
+            else if (idInterBankAccount != 0 && bankAccountNameInter == null)
+            {
+                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "El Banco inter no existe" };
+            }
+            
+            
+            if (paymentLetter.Status == "GENERADO")
+            {
+                
+                var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO(), bankAccountNameDestination, bankAccountNameOrigin, bankAccountNameInter);
 
-            paymentLetter.PDF = pdf;
+                paymentLetter.PDF = pdf;
+            }
+            else
+            {
+                paymentLetter.PDF = null;
+            }
 
             _contextDb.PaymentLetters.Add(paymentLetter);
             await _contextDb.SaveChangesAsync();

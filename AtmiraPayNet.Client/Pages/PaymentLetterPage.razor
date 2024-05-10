@@ -3,13 +3,15 @@
 @using AtmiraPayNet.Shared
 @using AtmiraPayNet.Shared.CreateRequest
 @using AtmiraPayNet.Client.Services
-
+@using CurrieTechnologies.Razor.SweetAlert2;
 @inject ICountryService countryService
 @inject IPaymentLetterService paymentLetterService
+@inject SweetAlertService Swal
+
 
 <h3>Crear emisión de carta de pago</h3>
 
-<EditForm Model="@paymentLetterModel" OnValidSubmit="@Generate">
+<EditForm Model="@paymentLetterModel">
     <DataAnnotationsValidator />
 
     <div class="form-group">
@@ -118,7 +120,7 @@
     
     <div class="mt-2 mb-2">
         <button type="submit" class="btn btn-primary" @onclick="Generate">Generar</button>
-        <button type="submit" class="btn btn-secondary">Mandar a Borradores</button>
+        <button class="btn btn-secondary" @onclick="SaveToDraft">Mandar a Borradores</button>
     </div>
     
 
@@ -131,7 +133,8 @@
     CountryDTO selectedCountryDetailsDestination = null;
     string selectedCountryCurrencyOrigin = null;
     string selectedCountryCurrencyDestination = null;
-
+    string selectedCountryOrigin = null;
+    string selectedCountryDestination = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,16 +143,16 @@
 
     private async void OnCountrySelectedOrigin(ChangeEventArgs e)
     {
-        var selectedCountryName = e.Value?.ToString();
-        selectedCountryCurrencyOrigin = GetCurrencies(selectedCountryName, countries);
+        selectedCountryOrigin  = e.Value?.ToString();
+        selectedCountryCurrencyOrigin = GetCurrencies(selectedCountryOrigin, countries);
 
     }
 
     private void OnCountrySelectedDestination(ChangeEventArgs e)
     {
 
-        var selectedCountryName = e.Value?.ToString();
-        selectedCountryCurrencyDestination = GetCurrencies(selectedCountryName, countries);
+        selectedCountryDestination = e.Value?.ToString();
+        selectedCountryCurrencyDestination = GetCurrencies(selectedCountryDestination, countries);
 
     }
 
@@ -185,36 +188,92 @@
 
     private async Task Generate()
     {
-        paymentLetterModel.Status = "GENERADO";
+        var resultado = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Información",
+                Text = "¿Deseas generar este pago?",
+                Icon = SweetAlertIcon.Info,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si",
+                CancelButtonText = "No"
+            });
 
-        var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+        if (resultado.IsConfirmed){
+            paymentLetterModel.Status = "GENERADO";
+            paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
+            paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
+            paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
+            paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
 
-        if (result.Successful)
-        {
 
+            var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
 
+            if (result.Successful)
+            {
+                var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Éxito",
+                        Text = "Generado correctamente este pago",
+                        Icon = SweetAlertIcon.Success
+                    });
+
+            }
+            else
+            {
+                var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Error, no generado el pdf",
+                        Icon = SweetAlertIcon.Error
+                    });
+            }
         }
-        else
-        {
-            
-        }
+
     }
 
     private async Task SaveToDraft()
     {
-        paymentLetterModel.Status = "DRAFT";
+        var resultado = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Información",
+                Text = "¿Deseas mandar a borrador este pago?",
+                Icon = SweetAlertIcon.Info,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si",
+                CancelButtonText = "No"
+            });
 
-        var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
-
-        if (result.Successful)
+        if (resultado.IsConfirmed)
         {
+            paymentLetterModel.Status = "BORRADOR";
+            paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
+            paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
+            paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
+            paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
 
+            var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
 
+            if (result.Successful)
+            {
+                var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Éxito",
+                        Text = "Mandado a borradores correctamente este pago",
+                        Icon = SweetAlertIcon.Success
+                    });
+
+            }
+            else
+            {
+                var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Error, no mandado a borradores el pdf",
+                        Icon = SweetAlertIcon.Error
+                    });
+            }
         }
-        else
-        {
-
-        }
+        
 
     }
 }

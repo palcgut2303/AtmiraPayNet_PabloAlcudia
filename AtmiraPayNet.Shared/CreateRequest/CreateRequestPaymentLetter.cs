@@ -18,16 +18,16 @@ namespace AtmiraPayNet.Shared.CreateRequest
         public int NumberStreet { get; set; }
         public int PayAmount { get; set; }
 
-        public string DestinationAccountIBAN { get; set; }
+        public string? DestinationAccountIBAN { get; set; }
 
-        public string DestinationBankName { get; set; }
+        public string? DestinationBankName { get; set; }
 
-        public string DestinationCountryBank { get; set; }
-        public string DestinationCurrencyBank { get; set; }
+        public string? DestinationCountryBank { get; set; }
+        public string? DestinationCurrencyBank { get; set; }
 
-        public string InterBankAccountIBAN { get; set; }
+        public string? InterBankAccountIBAN { get; set; }
 
-        public string InterBankName { get; set; }
+        public string? InterBankName { get; set; }
 
         //public string Pdf { get; set; }
         public string? Status { get; set; }
