@@ -7,6 +7,9 @@ namespace AtmitaPayNet.API.Interfaces
     public interface IPaymentLetterRepository
     {
         Task<ResponseAPI<PaymentLetterDTO>> Create(CreateRequestPaymentLetter model);
-        IEnumerable<PaymentLetterDTO> GetAll();
+        List<PaymentLetterDTO> GetAll();
+        Task<List<PaymentListAttribute>> GetAttributePayment();
+        Task<CreateRequestPaymentLetter> GetById(int id);
+        Task<ResponseAPI<PaymentLetterDTO>> Update(int id, CreateRequestPaymentLetter model);
     }
 }

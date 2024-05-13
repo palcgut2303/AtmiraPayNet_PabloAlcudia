@@ -27,7 +27,7 @@ namespace AtmitaPayNet.API.Controllers
 
             if (banks == null || banks.Count() == 0)
             {
-                return Ok(new ResponseAPI<List<BankDTO>> { Successful = false, Menssage = "No hay bancos disponibles" });
+                return Ok(new ResponseAPI<List<BankDTO>> { Successful = false, Message = "No hay bancos disponibles" });
             }
 
             return Ok(new ResponseAPI<List<BankDTO>> { Successful = true, Value = banks.ToList() });
@@ -40,7 +40,7 @@ namespace AtmitaPayNet.API.Controllers
 
             if (bank == null)
             {
-                return Ok(new ResponseAPI<BankDTO> { Successful = false, Menssage = "No se encontró el banco" });
+                return Ok(new ResponseAPI<BankDTO> { Successful = false, Message = "No se encontró el banco" });
             }
 
             return Ok(new ResponseAPI<BankDTO> { Successful = true, Value = bank });
@@ -53,7 +53,7 @@ namespace AtmitaPayNet.API.Controllers
 
             if (!result.Successful)
             {
-                return Ok(new ResponseAPI<BankDTO> { Successful = false, Menssage = "No se pudo crear el banco" });
+                return Ok(new ResponseAPI<BankDTO> { Successful = false, Message = "No se pudo crear el banco" });
             }
 
             return Ok(new ResponseAPI<BankDTO> { Successful = true, Value = result.Value });

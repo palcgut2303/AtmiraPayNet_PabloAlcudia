@@ -32,21 +32,64 @@ namespace AtmitaPayNet.API.Controllers
             return Ok(new PaymentLetterListResultDTO { Successful = true, ListPaymentLetters = paymentLetter });
         }
 
-       
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var paymentLetter = await _paymentLetterRepository.GetById(id);
+
+            if (paymentLetter == null)
+            {
+                return Ok(new ResponseAPI<CreateRequestPaymentLetter> { Successful = false, Message = "No se ha encontrado la carta de pago" });
+            }
+
+            return Ok(new ResponseAPI<CreateRequestPaymentLetter> { Successful = true, Value = paymentLetter });
+        }
+
+        [HttpGet("GetAttributePaymentLetter")]
+        public async Task<IActionResult> GetAttributePaymentLetter()
+        {
+            var paymentLetter = await _paymentLetterRepository.GetAttributePayment();
+
+            if(paymentLetter == null || paymentLetter.Count() == 0)
+            {
+                return Ok(new PaymentLetterListResultDTO { Successful = false, Message = "No hay cartas de pago disponibles" });
+            }
+
+            return Ok(paymentLetter);
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, CreateRequestPaymentLetter paymentLetterDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "Datos incorrectos" });
+            }
+
+            var result = await _paymentLetterRepository.Update(id, paymentLetterDTO);
+
+            if (result == null)
+            {
+                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se pudo actualizar la carta de pago" });
+            }
+
+            return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = result.Value });
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateRequestPaymentLetter paymentLetterDTO)
         {
             if(!ModelState.IsValid)
             {
-                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "Datos incorrectos" });
+                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "Datos incorrectos" });
             }
 
             var result = await _paymentLetterRepository.Create(paymentLetterDTO);
 
             if (result == null)
             {
-                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Menssage = "No se pudo crear la carta de pago" });
+                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se pudo crear la carta de pago" });
             }
 
             return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = result.Value });

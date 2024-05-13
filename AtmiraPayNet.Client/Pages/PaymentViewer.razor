@@ -1,0 +1,97 @@
+﻿@page "/paymentletterview"
+
+@using AtmiraPayNet.Client.Interfaces
+@using AtmiraPayNet.Shared
+@using AtmiraPayNet.Shared.EntityDTO
+
+@inject IPaymentLetterService paymentLetterService
+
+<h3>Visor de Pagos</h3>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Banco Origen</th>
+                <th>Banco Beneficiario</th>
+                <th>Cantidad</th>
+                <th>Divisa</th>
+                <th>Estado</th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (resultList.Value == null)
+            {
+                @if (resultList.Message != null)
+                {
+                    <tr>
+                        <td colspan="5" align="center">
+                            @resultList.Message
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" align="center">
+                            <img style="width: 50px" src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" />
+                        </td>
+                    </tr>
+                }
+
+            }
+            else
+            {
+                @foreach (var payment in listPayment)
+                {
+                    <tr>
+                        <td>@payment.OriginBankName</td>
+                        <td>@payment.DestinationBankName</td>
+                        <td>@payment.PayAmount</td>
+                        <td>@payment.currency</td>
+                        <td>@payment.status</td>
+                        <td>
+                            @if(payment.status == "GENERADO")
+                            {
+                                <a class="btn btn-primary btn-sm" href="payment-letter/@payment.Id">
+                                    Ver
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm ms-2">
+                                    Ver PDF
+                                </button>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary btn-sm" href="payment-letter/@payment.Id">
+                                    Editar
+                                </a>
+                            }
+
+                            
+                                
+                            
+                            
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+
+    </table>
+</div>
+
+
+@code {
+    ResponseAPI<List<PaymentListAttribute>> resultList = new ResponseAPI<List<PaymentListAttribute>>();
+    List<PaymentListAttribute> listPayment = new List<PaymentListAttribute>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        resultList = await paymentLetterService.GetAttributePayment();
+        listPayment = resultList.Value!;
+    }
+
+}

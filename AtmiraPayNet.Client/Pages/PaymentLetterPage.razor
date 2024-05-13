@@ -1,106 +1,267 @@
 ﻿@page "/payment-letter"
+
+@page "/payment-letter/{idPayment:int}"
 @using AtmiraPayNet.Client.Interfaces
 @using AtmiraPayNet.Shared
 @using AtmiraPayNet.Shared.CreateRequest
 @using AtmiraPayNet.Client.Services
+@using AtmiraPayNet.Shared.EntityDTO
 @using CurrieTechnologies.Razor.SweetAlert2;
 @inject ICountryService countryService
 @inject IPaymentLetterService paymentLetterService
+@inject NavigationManager NavigationManager
+
 @inject SweetAlertService Swal
 
-
-<h3>Crear emisión de carta de pago</h3>
+<h3>@title</h3>
 
 <EditForm Model="@paymentLetterModel">
     <DataAnnotationsValidator />
 
     <div class="form-group">
         <label for="cuentaOrigen">Cuenta Origen (formato IBAN)</label>
-        <InputText class="form-control" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
-               title="Ingrese un IBAN válido"
-               placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
-         <ValidationMessage For="@(() => paymentLetterModel.OriginAccountIBAN)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText class="form-control" readonly="readonly" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                       title="Ingrese un IBAN válido"
+                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
+        }
+        else
+        {
+            <InputText class="form-control" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                       title="Ingrese un IBAN válido"
+                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
+            <ValidationMessage For="@(() => paymentLetterModel.OriginAccountIBAN)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label for="nombreBancoOrigen">Nombre Banco Origen</label>
-        <InputText id="nombreBancoOrigen" class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
-        <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="nombreBancoOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
+            <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
+        }
+        else
+        {
+            <InputText id="nombreBancoOrigen" class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
+            <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label>Pais del Banco Origen</label>
-        <select class="form-control" @onchange="OnCountrySelectedOrigin">
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="nombreBancoOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.OriginCountryBank" />
 
-            <option value="">Selecciona un país</option>
-            @foreach (var country in countries)
-            {
-                <option value="@country.name.common">@country.name.common</option>
-            }
-        </select>
+        }
+        else
+        {
+            <select class="form-control" @onchange="OnCountrySelectedOrigin">
+
+                <option value="">Selecciona un país</option>
+                @foreach (var country in countries)
+                {
+                    <option value="@country.name.common">@country.name.common</option>
+                }
+            </select>
+        }
+
     </div>
-
-    @if (!string.IsNullOrEmpty(selectedCountryCurrencyOrigin))
+    @if (idPayment != 0)
     {
         <label>Divisa del banco origen:</label>
-        <InputText id="currencyBankOrigin" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyOrigin" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="nombreBancoOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.OriginCurrencyBank" />
+
+        }
+        else
+        {
+            <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyOrigin" />
+
+        }
     }
+    else
+    {
+        @if (!string.IsNullOrEmpty(selectedCountryCurrencyOrigin))
+        {
+            <label>Divisa del banco origen:</label>
+            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+            {
+                <InputText id="currencyBankOrigin" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.OriginCurrencyBank" />
+
+            }
+            else
+            {
+                <InputText id="currencyBankOrigin" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyOrigin" />
+
+            }
+        }
+    }
+
 
     <div class="form-group">
         <label for="cpOficinaOrigen">CP Oficina Origen</label>
-        <InputText id="cpOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.CP" />
-        <ValidationMessage For="@(() => paymentLetterModel.CP)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="cpOficinaOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.CP" />
+        }
+        else
+        {
+            <InputText id="cpOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.CP" />
+            <ValidationMessage For="@(() => paymentLetterModel.CP)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label for="calleOficinaOrigen">Calle Oficina Origen</label>
-        <InputText id="calleOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.Street" />
-        <ValidationMessage For="@(() => paymentLetterModel.Street)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="calleOficinaOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.Street" />
+
+        }
+        else
+        {
+            <InputText id="calleOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.Street" />
+            <ValidationMessage For="@(() => paymentLetterModel.Street)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label for="numeroCalleOficinaOrigen">Número de calle Oficina Origen</label>
-        <InputNumber id="numeroCalleOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
-        <ValidationMessage For="@(() => paymentLetterModel.NumberStreet)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputNumber id="numeroCalleOficinaOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
+        }
+        else
+        {
+            <InputNumber id="numeroCalleOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
+            <ValidationMessage For="@(() => paymentLetterModel.NumberStreet)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label for="cantidadPago">Cantidad del Pago</label>
-        <InputNumber id="cantidadPago" class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
-        <ValidationMessage For="@(() => paymentLetterModel.PayAmount)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputNumber id="cantidadPago" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
+
+        }
+        else
+        {
+            <InputNumber id="cantidadPago" class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
+            <ValidationMessage For="@(() => paymentLetterModel.PayAmount)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label for="cuentaDestinatario">Cuenta Destinatario (formato IBAN)</label>
-        <InputText class="form-control" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
-                   title="Ingrese un IBAN válido"
-                   placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
-        <ValidationMessage For="@(() => paymentLetterModel.DestinationAccountIBAN)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText class="form-control" readonly="readonly" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                       title="Ingrese un IBAN válido"
+                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
+        }
+        else
+        {
+            <InputText class="form-control" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                       title="Ingrese un IBAN válido"
+                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
+            <ValidationMessage For="@(() => paymentLetterModel.DestinationAccountIBAN)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label for="nombreBancoDestinatario">Nombre Banco Destinatario</label>
-        <InputText id="nombreBancoDestinatario" class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
-        <ValidationMessage For="@(() => paymentLetterModel.DestinationBankName)" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="nombreBancoDestinatario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
+
+        }
+        else
+        {
+            <InputText id="nombreBancoDestinatario" class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
+            <ValidationMessage For="@(() => paymentLetterModel.DestinationBankName)" />
+        }
+
     </div>
 
     <div class="form-group">
         <label>Pais del Banco Destino</label>
-        <select class="form-control" @onchange="OnCountrySelectedDestination">
-            <label>Pais del Banco Destino</label>
-            <option value="">Selecciona un país</option>
-            @foreach (var country in countries)
-            {
-                <option value="@country.name.common">@country.name.common</option>
-            }
-        </select>
-    </div>
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.DestinationCountryBank" />
 
-    @if (!string.IsNullOrEmpty(selectedCountryCurrencyDestination))
+        }
+        else
+        {
+            <select class="form-control" @onchange="OnCountrySelectedDestination">
+                <label>Pais del Banco Destino</label>
+                <option value="">Selecciona un país</option>
+                @foreach (var country in countries)
+                {
+                    <option value="@country.name.common">@country.name.common</option>
+                }
+            </select>
+        }
+
+    </div>
+    @if (idPayment != 0)
     {
         <label>Divisa del banco destino:</label>
-        <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
+        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        {
+            <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.DestinationCurrencyBank" />
+        }
+        else
+        {
+            <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
+
+        }
     }
+    else
+    {
+        @if (!string.IsNullOrEmpty(selectedCountryCurrencyDestination))
+        {
+            <label>Divisa del banco destino:</label>
+            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+            {
+                <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.DestinationCurrencyBank" />
+
+            }
+            else
+            {
+                <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
+
+            }
+        }
+    }
+
+    @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+    {
+        @if (paymentLetterModel.InterBankName != null && paymentLetterModel.InterBankAccountIBAN != null)
+        {
+            <div class="form-group">
+                <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
+                <InputText id="cuentaIntermediaria" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
+            </div>
+
+            <div class="form-group">
+                <label for="nombreBancoIntermediario">Nombre Banco Intermediario</label>
+                <InputText id="nombreBancoIntermediario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
+            </div>
+        }
+    }
+
 
     @if (selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination)
     {
@@ -117,17 +278,32 @@
         </div>
     }
 
-    
-    <div class="mt-2 mb-2">
-        <button type="submit" class="btn btn-primary" @onclick="Generate">Generar</button>
-        <button class="btn btn-secondary" @onclick="SaveToDraft">Mandar a Borradores</button>
-    </div>
-    
+    @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+    {
+        <div class="mt-2 mb-2">
+            <a class="btn btn-primary" href="paymentletterview">Cerrar</a>
+        </div>
+    }
+    else
+    {
+        <div class="mt-2 mb-2">
+            <button type="submit" class="btn btn-primary" @onclick="Generate">Generar</button>
+            <button class="btn btn-secondary" @onclick="SaveToDraft">Guardar Borrador</button>
+        </div>
+    }
+
+
 
 </EditForm>
 
 @code {
+    [Parameter]
+    public int idPayment { get; set; } = 0;
+
+    ResponseAPI<CreateRequestPaymentLetter> responseAPI = new ResponseAPI<CreateRequestPaymentLetter>();
+
     private CreateRequestPaymentLetter paymentLetterModel = new CreateRequestPaymentLetter();
+
     List<CountryInfo> countries = new List<CountryInfo>();
     CountryInfo selectedCountryDetailsOrigin = null;
     CountryDTO selectedCountryDetailsDestination = null;
@@ -135,17 +311,37 @@
     string selectedCountryCurrencyDestination = null;
     string selectedCountryOrigin = null;
     string selectedCountryDestination = null;
+    string cca2SelectedCountryOrigin = null;
+    string cca2SelectedCountryDestination = null;
+
+    string btnText = "";
+    string title = "";
+
 
     protected override async Task OnInitializedAsync()
     {
         countries = await countryService.GetCountries();
+
+        if (idPayment != 0)
+        {
+            title = "Editar/Ver Registro";
+            responseAPI = await paymentLetterService.GetPaymentLetterById(idPayment);
+            paymentLetterModel = responseAPI.Value!;
+
+        }
+        else
+        {
+            title = "Crear Emision de Pago";
+            paymentLetterModel = new CreateRequestPaymentLetter();
+        }
+
     }
 
     private async void OnCountrySelectedOrigin(ChangeEventArgs e)
     {
-        selectedCountryOrigin  = e.Value?.ToString();
+        selectedCountryOrigin = e.Value?.ToString();
         selectedCountryCurrencyOrigin = GetCurrencies(selectedCountryOrigin, countries);
-
+        cca2SelectedCountryOrigin = GetCca2SelectedCountry(selectedCountryOrigin, countries);
     }
 
     private void OnCountrySelectedDestination(ChangeEventArgs e)
@@ -153,7 +349,7 @@
 
         selectedCountryDestination = e.Value?.ToString();
         selectedCountryCurrencyDestination = GetCurrencies(selectedCountryDestination, countries);
-
+        cca2SelectedCountryDestination = GetCca2SelectedCountry(selectedCountryDestination, countries);
     }
 
     private string GetCurrencies(string selectedCountryName, List<CountryInfo> countries)
@@ -186,94 +382,224 @@
         return "No encontrado";
     }
 
+    private string GetCca2SelectedCountry(string selectedCountryName, List<CountryInfo> countries)
+    {
+        foreach (var country in countries)
+        {
+            if (country.name.common == selectedCountryName)
+            {
+                return country.cca2;
+            }
+        }
+
+        return "No encontrado";
+    }
+
     private async Task Generate()
     {
-        var resultado = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "Información",
-                Text = "¿Deseas generar este pago?",
-                Icon = SweetAlertIcon.Info,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Si",
-                CancelButtonText = "No"
-            });
-
-        if (resultado.IsConfirmed){
-            paymentLetterModel.Status = "GENERADO";
-            paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
-            paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
-            paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
-            paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
 
 
-            var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+        paymentLetterModel.Status = "GENERADO";
+        paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
+        paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
+        paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
+        paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
 
-            if (result.Successful)
-            {
-                var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Éxito",
-                        Text = "Generado correctamente este pago",
-                        Icon = SweetAlertIcon.Success
-                    });
+        var isCorrect = CheckedCca2(paymentLetterModel.OriginAccountIBAN, paymentLetterModel.DestinationAccountIBAN,
+                                    cca2SelectedCountryOrigin, cca2SelectedCountryDestination);
 
-            }
-            else
+
+
+        if (isCorrect)
+        {
+            if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
             {
                 var respuesta = await Swal.FireAsync(new SweetAlertOptions
                     {
                         Title = "Error",
-                        Text = "Error, no generado el pdf",
+                        Text = "Rellena todos los datos",
                         Icon = SweetAlertIcon.Error
                     });
             }
-        }
+            else
+            {
+                var resultado = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Información",
+                        Text = "¿Deseas generar este pago?",
+                        Icon = SweetAlertIcon.Info,
+                        ShowCancelButton = true,
+                        ConfirmButtonText = "Si",
+                        CancelButtonText = "No"
+                    });
 
+                if (resultado.IsConfirmed)
+                {
+                    var result = new ResponseAPI<PaymentLetterDTO>();
+                    if (idPayment != 0)
+                    {
+                        result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
+
+                    }
+                    else
+                    {
+                        result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+
+                    }
+
+                    if (result.Successful)
+                    {
+                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = "Éxito",
+                                Text = "Generado correctamente este pago",
+                                Icon = SweetAlertIcon.Success
+                            });
+
+                        NavigationManager.NavigateTo("/paymentletterview");
+
+
+                    }
+                    else
+                    {
+                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = "Error",
+                                Text = "Error, no generado el pdf",
+                                Icon = SweetAlertIcon.Error
+                            });
+                    }
+                }
+                else
+                {
+                    return;
+                }
+
+
+            }
+        }
+        else
+        {
+
+            var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Error, el cca2 no coincide con el codigo del iban",
+                    Icon = SweetAlertIcon.Error
+                });
+        }
     }
 
     private async Task SaveToDraft()
     {
-        var resultado = await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "Información",
-                Text = "¿Deseas mandar a borrador este pago?",
-                Icon = SweetAlertIcon.Info,
-                ShowCancelButton = true,
-                ConfirmButtonText = "Si",
-                CancelButtonText = "No"
-            });
+        paymentLetterModel.Status = "BORRADOR";
+        paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
+        paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
+        paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
+        paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
 
-        if (resultado.IsConfirmed)
+        var isCorrect = CheckedCca2(paymentLetterModel.OriginAccountIBAN, paymentLetterModel.DestinationAccountIBAN,
+                                    cca2SelectedCountryOrigin, cca2SelectedCountryDestination);
+
+
+
+        if (isCorrect)
         {
-            paymentLetterModel.Status = "BORRADOR";
-            paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
-            paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
-            paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
-            paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
-
-            var result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
-
-            if (result.Successful)
-            {
-                var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Éxito",
-                        Text = "Mandado a borradores correctamente este pago",
-                        Icon = SweetAlertIcon.Success
-                    });
-
-            }
-            else
+            if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
             {
                 var respuesta = await Swal.FireAsync(new SweetAlertOptions
                     {
                         Title = "Error",
-                        Text = "Error, no mandado a borradores el pdf",
+                        Text = "Rellena todos los datos",
                         Icon = SweetAlertIcon.Error
                     });
             }
+            else
+            {
+                var resultado = await Swal.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Información",
+                        Text = "¿Deseas generar este pago?",
+                        Icon = SweetAlertIcon.Info,
+                        ShowCancelButton = true,
+                        ConfirmButtonText = "Si",
+                        CancelButtonText = "No"
+                    });
+
+                if (resultado.IsConfirmed)
+                {
+                    var result = new ResponseAPI<PaymentLetterDTO>();
+                    if (idPayment != 0)
+                    {
+                        result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
+
+                    }
+                    else
+                    {
+                        result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+
+                    }
+
+                    if (result.Successful)
+                    {
+                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = "Éxito",
+                                Text = "Mandado a borradores.",
+                                Icon = SweetAlertIcon.Success
+                            });
+                        NavigationManager.NavigateTo("/paymentletterview");
+
+                    }
+                    else
+                    {
+                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = "Error",
+                                Text = "Error, no mandado a borradores",
+                                Icon = SweetAlertIcon.Error
+                            });
+                    }
+                }
+                else
+                {
+                    return;
+                }
+
+
+            }
         }
-        
+        else
+        {
+
+            var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Error, el cca2 no coincide con el codigo del iban",
+                    Icon = SweetAlertIcon.Error
+                });
+        }
+
 
     }
+
+    private bool CheckedCca2(string ibanOrigin, string ibanDestination, string cca2Origin, string cca2Destination)
+    {
+
+        if (ibanOrigin == null || ibanDestination == null || cca2Origin == null || cca2Destination == null)
+        {
+            return false;
+        }
+
+        if (ibanOrigin.Substring(0, 2) == cca2Origin && ibanDestination.Substring(0, 2) == cca2Destination)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
 }

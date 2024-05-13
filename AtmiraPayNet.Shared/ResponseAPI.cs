@@ -10,6 +10,6 @@ namespace AtmiraPayNet.Shared
     {
         public bool Successful { get; set; }
         public T? Value { get; set; }
-        public string? Menssage { get; set; }
+        public string? Message { get; set; }
     }
 }
