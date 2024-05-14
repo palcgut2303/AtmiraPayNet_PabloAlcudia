@@ -8,6 +8,7 @@ namespace AtmiraPayNet.Client.Interfaces
     {
         Task<ResponseAPI<List<PaymentListAttribute>>> GetAttributePayment();
         Task<ResponseAPI<CreateRequestPaymentLetter>> GetPaymentLetterById(int id);
+        Task<ResponseAPI<string>> GetPDFString(int id);
         Task<ResponseAPI<PaymentLetterDTO>> PostPaymentLetter(CreateRequestPaymentLetter model);
         Task<ResponseAPI<PaymentLetterDTO>> PutPaymentLetter(CreateRequestPaymentLetter model, int id);
     }

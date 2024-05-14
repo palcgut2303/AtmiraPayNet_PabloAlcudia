@@ -24,12 +24,10 @@
 
         if (user.Identity!.IsAuthenticated)
         {
-            // Si hay un usuario autenticado, redirige a la página de inicio.
             NavigationManager.NavigateTo("/home");
         }
         else
         {
-            // Si no hay usuario autenticado, redirige a la página de inicio de sesión, por ejemplo.
             NavigationManager.NavigateTo("/login");
         }
     }

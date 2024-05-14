@@ -2,8 +2,12 @@
 using AtmiraPayNet.Shared;
 using AtmiraPayNet.Shared.CreateRequest;
 using AtmiraPayNet.Shared.EntityDTO;
+using Microsoft.JSInterop;
+using System;
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 using static System.Net.WebRequestMethods;
+using File = System.IO.File;
 
 namespace AtmiraPayNet.Client.Services
 {
@@ -112,5 +116,28 @@ namespace AtmiraPayNet.Client.Services
             }
         }
 
+        public async Task<ResponseAPI<string>> GetPDFString(int id)
+        {
+            var response = await GetPaymentLetterById(id);
+            var model = response.Value!;
+
+           if (model.PDF == null)
+            {
+                return new ResponseAPI<string>
+                {
+                    Successful = false,
+                    Message = "Error, no se ha podido obtener el PDF",
+                };
+            }
+            else
+            {
+                return new ResponseAPI<string>
+                {
+                    Successful = true,
+                    Value = model.PDF,
+                };
+            }
+
+        }
     }
 }

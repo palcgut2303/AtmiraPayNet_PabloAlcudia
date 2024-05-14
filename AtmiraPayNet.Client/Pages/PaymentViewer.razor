@@ -1,10 +1,12 @@
 ﻿@page "/paymentletterview"
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 
-@using AtmiraPayNet.Client.Interfaces
-@using AtmiraPayNet.Shared
-@using AtmiraPayNet.Shared.EntityDTO
+
 
 @inject IPaymentLetterService paymentLetterService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject IWebAssemblyHostEnvironment WebHostEnvironment
 
 <h3>Visor de Pagos</h3>
 
@@ -53,13 +55,13 @@
                         <td>@payment.currency</td>
                         <td>@payment.status</td>
                         <td>
-                            @if(payment.status == "GENERADO")
+                            @if (payment.status == "GENERADO")
                             {
                                 <a class="btn btn-primary btn-sm" href="payment-letter/@payment.Id">
                                     Ver
                                 </a>
-                                <button type="button" class="btn btn-danger btn-sm ms-2">
-                                    Ver PDF
+                                <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(() => DownloadPDF(payment.Id))">
+                                    Descargar PDF
                                 </button>
                             }
                             else
@@ -69,10 +71,6 @@
                                 </a>
                             }
 
-                            
-                                
-                            
-                            
                         </td>
                     </tr>
                 }
@@ -93,5 +91,17 @@
         resultList = await paymentLetterService.GetAttributePayment();
         listPayment = resultList.Value!;
     }
+
+    private async Task DownloadPDF(int id)
+    {
+        var result = await paymentLetterService.GetPDFString(id);
+        var model = result.Value!;
+        if (result.Successful)
+        {
+            await JSRuntime.InvokeVoidAsync("downloadFile", model);
+        }
+    }
+
+   
 
 }

@@ -12,10 +12,12 @@ namespace AtmitaPayNet.API.Controllers
     public class PaymentLetterController : ControllerBase
     {
         private readonly IPaymentLetterRepository _paymentLetterRepository;
+        private readonly IPDFRepository _pdfrepository;
 
-        public PaymentLetterController(IPaymentLetterRepository paymentLetterRepository)
+        public PaymentLetterController(IPaymentLetterRepository paymentLetterRepository,IPDFRepository pDFRepository)
         {
             _paymentLetterRepository = paymentLetterRepository;
+            this._pdfrepository = pDFRepository;
         }
 
         [HttpGet]
@@ -93,6 +95,19 @@ namespace AtmitaPayNet.API.Controllers
             }
 
             return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = result.Value });
+        }
+
+        [HttpGet("GetPdf/{id}")]
+        public  IActionResult GetPdf(int id)
+        {
+            var pdf =  _pdfrepository.GetPdf(id);
+
+            if (pdf == null)
+            {
+                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se ha podido obtener el archivo PDF" });
+            }
+
+            return File(pdf, "application/pdf", "CartaDePago.pdf");
         }
 
 

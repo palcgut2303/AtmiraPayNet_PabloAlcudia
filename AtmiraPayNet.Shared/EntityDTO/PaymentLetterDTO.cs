@@ -31,5 +31,7 @@ namespace AtmiraPayNet.Shared.EntityDTO
         public DateTime? Date { get; set; }
 
         public string? PDF { get; set; }
+
+        
     }
 }

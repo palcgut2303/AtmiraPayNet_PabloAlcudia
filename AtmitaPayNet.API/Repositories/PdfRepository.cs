@@ -1,4 +1,5 @@
 ﻿using AtmiraPayNet.Shared.EntityDTO;
+using AtmitaPayNet.API.Contexto;
 using AtmitaPayNet.API.Interfaces;
 using AtmitaPayNet.API.Models;
 using iText.Kernel.Pdf;
@@ -10,7 +11,14 @@ namespace AtmitaPayNet.API.Repositories
 {
     public class PdfRepository : IPDFRepository
     {
-        public string GeneratePdf(PaymentLetterDTO paymentLetter,string bankAccountNameDestination,string bankAccountNameOrigin, string bankAccountNameInter)
+        private readonly ApplicationDbContext _contextDb;
+
+        public PdfRepository(ApplicationDbContext contextDb)
+        {
+            _contextDb = contextDb;
+        }
+
+        public string GeneratePdf(PaymentLetterDTO paymentLetter, string bankAccountNameDestination, string bankAccountNameOrigin, string bankAccountNameInter)
         {
             try
             {
@@ -49,6 +57,18 @@ namespace AtmitaPayNet.API.Repositories
             }
 
         }
+
+
+        public byte[] GetPdf(int idPayment)
+        {
+            var pdf = _contextDb.PaymentLetters.Where(x => x.Id == idPayment).Select(x => x.PDF).FirstOrDefault();
+
+            byte[] pdfBytes = Convert.FromBase64String(pdf);
+
+            return pdfBytes;
+        }
+
+       
 
 
     }

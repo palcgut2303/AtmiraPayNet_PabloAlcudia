@@ -51,7 +51,8 @@ namespace AtmitaPayNet.API.Repositories
                 NumberStreet = x.Address.NumberStreet,
                 Street = x.Address.Street,
                 PayAmount = x.PaymentAmount,
-                Status = x.Status
+                Status = x.Status,
+                PDF = x.PDF
             }).FirstOrDefaultAsync();
 
             return paymentLetter;
