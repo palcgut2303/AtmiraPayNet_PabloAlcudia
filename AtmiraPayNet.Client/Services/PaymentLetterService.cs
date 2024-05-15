@@ -54,14 +54,14 @@ namespace AtmiraPayNet.Client.Services
 
         public async Task<ResponseAPI<List<PaymentListAttribute>>> GetAttributePayment()
         {
-            var response = await _httpClient.GetFromJsonAsync<List<PaymentListAttribute>>("api/PaymentLetter/GetAttributePaymentLetter");
+            var response = await _httpClient.GetFromJsonAsync<PaymentAttributeListDTO>("api/PaymentLetter/GetAttributePaymentLetter");
 
-            if (response.Count() == 0 || response == null)
+            if (!response.Successful)
             {
                 return new ResponseAPI<List<PaymentListAttribute>>
                 {
                     Successful = false,
-                    Message = "Error, no se han podido obtener los atributos de la carta de pago",
+                    Message = "No hay emisiones de pago",
                 };
             }
 
@@ -69,7 +69,7 @@ namespace AtmiraPayNet.Client.Services
             return new ResponseAPI<List<PaymentListAttribute>>
             {
                 Successful = true,
-                Value = response,
+                Value = response.ListPaymentAttributes.ToList(),
             };
 
         }

@@ -71,8 +71,6 @@ namespace AtmitaPayNet.API.Controllers
             var usuarioId = await _userRepository.GetUserIdByEmailAsync(login.Email);
             var rolJWT = await _userRepository.GetUserRolesAsync(usuarioId);
 
-
-
             var user = await _userManager.FindByEmailAsync(login.Email);
 
             var claims = new[]
@@ -108,12 +106,16 @@ namespace AtmitaPayNet.API.Controllers
         {
             string rolDefault = "Empleado";
 
-
             try
             {
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
+                }
+
+                if (!EsMayorDeEdad(model.BirthDay) || !EsMenorDe80Anios(model.BirthDay))
+                {
+                    return BadRequest(new RegisterResult { Successful = true , Errors = new List<string> { "La edad debe ser menor de 80 y mayor de 18" } });
                 }
 
                 var usuario = new User()
@@ -179,6 +181,28 @@ namespace AtmitaPayNet.API.Controllers
             return Ok(new UserListResult { Successful = true, ListUser = usuarios});
         }
 
+        private bool EsMayorDeEdad(DateTime fechaNacimiento)
+        {
+            var edad = DateTime.Today.Year - fechaNacimiento.Year;
+            if (fechaNacimiento.Date > DateTime.Today.AddYears(-edad))
+            {
+                edad--;
+            }
+                
+
+            return edad >= 18;
+        }
+
+        private bool EsMenorDe80Anios(DateTime fechaNacimiento)
+        {
+            var edad = DateTime.Today.Year - fechaNacimiento.Year;
+            if (fechaNacimiento.Date > DateTime.Today.AddYears(-edad)) {
+                edad--;
+            }
+                
+
+            return edad < 80;
+        }
 
 
     }

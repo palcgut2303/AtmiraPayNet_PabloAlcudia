@@ -73,7 +73,7 @@ namespace AtmitaPayNet.API.Repositories
 
             if (idDestinationBankAccount == 0 || idOriginBankAccount == 0)
             {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "El Banco de origen o de destino no existe" };
+                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message ="La cuenta de banco origen o de destino no existe" };
             }
 
             var paymentLetter = new PaymentLetter

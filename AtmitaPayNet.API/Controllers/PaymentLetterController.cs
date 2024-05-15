@@ -54,10 +54,10 @@ namespace AtmitaPayNet.API.Controllers
 
             if(paymentLetter == null || paymentLetter.Count() == 0)
             {
-                return Ok(new PaymentLetterListResultDTO { Successful = false, Message = "No hay cartas de pago disponibles" });
+                return Ok(new PaymentAttributeListDTO { Successful = false, Message = "No hay cartas de pago disponibles" });
             }
 
-            return Ok(paymentLetter);
+            return Ok(new PaymentAttributeListDTO { Successful = true, ListPaymentAttributes = paymentLetter });
         }
 
 
@@ -71,9 +71,9 @@ namespace AtmitaPayNet.API.Controllers
 
             var result = await _paymentLetterRepository.Update(id, paymentLetterDTO);
 
-            if (result == null)
+            if (!result.Successful)
             {
-                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se pudo actualizar la carta de pago" });
+                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se pudo actualizar la carta de pago" });
             }
 
             return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = result.Value });
@@ -89,9 +89,9 @@ namespace AtmitaPayNet.API.Controllers
 
             var result = await _paymentLetterRepository.Create(paymentLetterDTO);
 
-            if (result == null)
+            if (!result.Successful)
             {
-                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se pudo crear la carta de pago" });
+                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = result.Message });
             }
 
             return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = result.Value });
@@ -104,7 +104,7 @@ namespace AtmitaPayNet.API.Controllers
 
             if (pdf == null)
             {
-                return Ok(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se ha podido obtener el archivo PDF" });
+                return BadRequest(new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se ha podido obtener el archivo PDF" });
             }
 
             return File(pdf, "application/pdf", "CartaDePago.pdf");

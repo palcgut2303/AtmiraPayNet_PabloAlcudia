@@ -51,17 +51,17 @@
 
     <div class="form-group">
         <label>Pais del Banco Origen</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        @if ( idPayment != 0 && paymentLetterModel.Status == "GENERADO")
         {
-            <InputText id="nombreBancoOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.OriginCountryBank" />
+            <InputText id="currencyBankOrigin" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.OriginCountryBank" />
 
         }
         else
         {
-            if (paymentLetterModel != null)
+            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "BORRADOR")
             {
                 <select class="form-control" @onchange="OnCountrySelectedOrigin" value="@paymentLetterModel.OriginCountryBank">
-
+                    
                     <option value="">Selecciona un país</option>
                     @foreach (var country in countries)
                     {
@@ -72,7 +72,7 @@
             else
             {
                 <select class="form-control" @onchange="OnCountrySelectedOrigin">
-
+                    
                     <option value="">Selecciona un país</option>
                     @foreach (var country in countries)
                     {
@@ -80,6 +80,7 @@
                     }
                 </select>
             }
+
 
         }
 
@@ -225,7 +226,7 @@
         }
         else
         {
-            @if (paymentLetterModel != null)
+            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "BORRADOR")
             {
                 <select class="form-control" @onchange="OnCountrySelectedDestination" value="@paymentLetterModel.DestinationCountryBank">
                     <label>Pais del Banco Destino</label>
@@ -310,19 +311,19 @@
         }
     }
 
-    @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status != "GENERADO")
+    @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
     {
         @if (paymentLetterModel.OriginCurrencyBank != paymentLetterModel.DestinationCurrencyBank)
         {
             <div class="form-group">
                 <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
-                <InputText id="cuentaIntermediaria"  class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
+                <InputText id="cuentaIntermediaria" readonly="readonly"  class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankAccountIBAN)" />
             </div>
 
             <div class="form-group">
                 <label for="nombreBancoIntermediario">Nombre Banco Intermediario</label>
-                <InputText id="nombreBancoIntermediario"  class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
+                <InputText id="nombreBancoIntermediario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankName)" />
             </div>
         }
@@ -335,13 +336,13 @@
         {
             <div class="form-group">
                 <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
-                <InputText id="cuentaIntermediaria" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
+                <InputText id="cuentaIntermediaria"  class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankAccountIBAN)" />
             </div>
 
             <div class="form-group">
                 <label for="nombreBancoIntermediario">Nombre Banco Intermediario</label>
-                <InputText id="nombreBancoIntermediario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
+                <InputText id="nombreBancoIntermediario" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankName)" />
             </div>
         }
@@ -476,7 +477,7 @@
     {
 
 
-        paymentLetterModel.Status = "GENERADO";
+       
         if (idPayment == 0)
         {
             paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
@@ -507,6 +508,7 @@
                         Text = "Rellena todos los datos",
                         Icon = SweetAlertIcon.Error
                     });
+                NavigationManager.NavigateTo("/paymentletterview");
             }
             else
             {
@@ -525,11 +527,13 @@
                     var result = new ResponseAPI<PaymentLetterDTO>();
                     if (idPayment != 0)
                     {
+                         paymentLetterModel.Status = "GENERADO";
                         result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
 
                     }
                     else
                     {
+                        paymentLetterModel.Status = "GENERADO";
                         result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
 
                     }
@@ -555,6 +559,7 @@
                                 Text = "Error, no generado el pdf",
                                 Icon = SweetAlertIcon.Error
                             });
+
                     }
                 }
                 else
@@ -574,12 +579,13 @@
                     Text = "Error, el cca2 no coincide con el codigo del iban",
                     Icon = SweetAlertIcon.Error
                 });
+
         }
     }
 
     private async Task SaveToDraft()
     {
-        paymentLetterModel.Status = "BORRADOR";
+        
 
         if (idPayment == 0)
         {
@@ -628,11 +634,13 @@
                     var result = new ResponseAPI<PaymentLetterDTO>();
                     if (idPayment != 0)
                     {
+                        paymentLetterModel.Status = "BORRADOR";
                         result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
 
                     }
                     else
                     {
+                        paymentLetterModel.Status = "BORRADOR";
                         result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
 
                     }
@@ -675,6 +683,7 @@
                     Text = "Error, el cca2 no coincide con el codigo del iban",
                     Icon = SweetAlertIcon.Error
                 });
+
         }
 
 

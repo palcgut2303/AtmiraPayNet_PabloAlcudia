@@ -89,6 +89,7 @@
     protected override async Task OnInitializedAsync()
     {
         resultList = await paymentLetterService.GetAttributePayment();
+
         listPayment = resultList.Value!;
     }
 

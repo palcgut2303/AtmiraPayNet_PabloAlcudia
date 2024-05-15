@@ -2,6 +2,7 @@
 using AtmiraPayNet.Shared.CreateRequest;
 using AtmiraPayNet.Shared.EntityDTO;
 using AtmitaPayNet.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace AtmitaPayNet.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class BankAccountController : ControllerBase
     {
 
