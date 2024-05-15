@@ -8,6 +8,9 @@
 
 @inject SweetAlertService Swal
 
+@attribute [Authorize(Roles = "Empleado")]
+
+
 <h3>@title</h3>
 
 <EditForm Model="@paymentLetterModel">

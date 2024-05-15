@@ -1,12 +1,12 @@
 ﻿@page "/paymentletterview"
-@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
-
 
 
 @inject IPaymentLetterService paymentLetterService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
-@inject IWebAssemblyHostEnvironment WebHostEnvironment
+
+@attribute [Authorize(Roles = "Empleado")]
+
 
 <h3>Visor de Pagos</h3>
 

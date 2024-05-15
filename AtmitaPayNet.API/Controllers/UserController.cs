@@ -69,6 +69,7 @@ namespace AtmitaPayNet.API.Controllers
         {
             var username = await _context.Users.Where(u => u.Email == login.Email).Select(x => x.UserName).FirstOrDefaultAsync();
             var usuarioId = await _userRepository.GetUserIdByEmailAsync(login.Email);
+            var rolJWT = await _userRepository.GetUserRolesAsync(usuarioId);
 
 
 
@@ -77,7 +78,8 @@ namespace AtmitaPayNet.API.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name,login.Email!),
-                new Claim("username",username!)
+                new Claim("username",username!),
+                new Claim(ClaimTypes.Role, rolJWT.FirstOrDefault())
             };
 
             //foreach (var rol in rolJWT)
@@ -104,6 +106,9 @@ namespace AtmitaPayNet.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
+            string rolDefault = "Empleado";
+
+
             try
             {
                 if (!ModelState.IsValid)
@@ -124,6 +129,12 @@ namespace AtmitaPayNet.API.Controllers
 
                 if (createdUser.Succeeded)
                 {
+                    var roleResult = await _userManager.AddToRoleAsync(usuario, rolDefault);
+
+                    if (!roleResult.Succeeded)
+                    {
+                        return StatusCode(500, roleResult.Errors);
+                    }
 
                     return Ok(new RegisterResult { Successful = true });
 

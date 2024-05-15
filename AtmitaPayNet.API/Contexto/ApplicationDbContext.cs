@@ -1,4 +1,5 @@
 ﻿using AtmitaPayNet.API.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -43,6 +44,12 @@ namespace AtmitaPayNet.API.Contexto
                 .HasForeignKey(p => p.InterBankId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            List<IdentityRole> roles = new List<IdentityRole>
+        {
+            new IdentityRole
+            { Name = "Empleado", NormalizedName = "EMPLEADO" }
+        };
+            modelBuilder.Entity<IdentityRole>().HasData(roles);
 
         }
 
