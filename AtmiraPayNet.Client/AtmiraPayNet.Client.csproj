@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\pdf\**" />
+    <Content Remove="wwwroot\pdf\**" />
+    <EmbeddedResource Remove="wwwroot\pdf\**" />
+    <None Remove="wwwroot\pdf\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.4" />
@@ -18,10 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AtmiraPayNet.Shared\AtmiraPayNet.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\pdf\" />
   </ItemGroup>
 
 </Project>

@@ -59,7 +59,7 @@
                         <td>
                             @if (payment.status == "GENERADO")
                             {
-                                <a class="btn btn-primary btn-sm" href="payment-letter/@payment.Id">
+                                <a class="btn btn-primary btn-sm ms-2" href="payment-letter/@payment.Id">
                                     Ver
                                 </a>
                                 <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(() => DownloadPDF(payment.Id))">
@@ -68,7 +68,7 @@
                             }
                             else
                             {
-                                <a class="btn btn-primary btn-sm" href="payment-letter/@payment.Id">
+                                <a class="btn btn-primary btn-sm  ms-2" href="payment-letter/@payment.Id">
                                     Editar
                                 </a>
                             }
