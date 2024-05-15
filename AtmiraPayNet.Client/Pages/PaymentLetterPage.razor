@@ -18,93 +18,53 @@
 
     <div class="form-group">
         <label for="cuentaOrigen">Cuenta Origen (formato IBAN)</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputText class="form-control" readonly="readonly" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
-                       title="Ingrese un IBAN válido"
-                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
-        }
-        else
-        {
-            <InputText class="form-control" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
-                       title="Ingrese un IBAN válido"
-                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
-            <ValidationMessage For="@(() => paymentLetterModel.OriginAccountIBAN)" />
-        }
 
+        <InputText class="form-control" readonly=@(isGenerate) pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                   title="Ingrese un IBAN válido"
+                   placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
+        <ValidationMessage For="@(() => paymentLetterModel.OriginAccountIBAN)" />
     </div>
 
     <div class="form-group">
         <label for="nombreBancoOrigen">Nombre Banco Origen</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputText id="nombreBancoOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
-            <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
-        }
-        else
-        {
-            <InputText id="nombreBancoOrigen" class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
-            <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
-        }
+
+        <InputText id="nombreBancoOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
+        <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
 
     </div>
 
     <div class="form-group">
         <label>Pais del Banco Origen</label>
-        @if ( idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        @if (isGenerate)
         {
             <InputText id="currencyBankOrigin" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.OriginCountryBank" />
 
         }
         else
         {
-            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "BORRADOR")
-            {
-                <select class="form-control" @onchange="OnCountrySelectedOrigin" value="@paymentLetterModel.OriginCountryBank">
-                    
-                    <option value="">Selecciona un país</option>
-                    @foreach (var country in countries)
-                    {
-                        <option value="@country.name.common">@country.name.common</option>
-                    }
-                </select>
-            }
-            else
-            {
-                <select class="form-control" @onchange="OnCountrySelectedOrigin">
-                    
-                    <option value="">Selecciona un país</option>
-                    @foreach (var country in countries)
-                    {
-                        <option value="@country.name.common">@country.name.common</option>
-                    }
-                </select>
-            }
+            <select class="form-control" @onchange="OnCountrySelectedOrigin" value="@selectedCountryOrigin">
 
-
+                <option value="">Selecciona un país</option>
+                @foreach (var country in countries)
+                {
+                    <option value="@country.name.common">@country.name.common</option>
+                }
+            </select>
         }
 
     </div>
     @if (idPayment != 0)
     {
         <label>Divisa del banco origen:</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        @if (isGenerate)
         {
             <InputText id="nombreBancoOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.OriginCurrencyBank" />
 
         }
         else
         {
-            if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "BORRADOR")
-            {
-                <InputText id="currencyBankOrigen" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyOrigin" />
+            <InputText id="currencyBankOrigen" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyOrigin" />
 
-            }
-            else
-            {
-                <InputText id="currencyBankOrigen" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyOrigin" />
-
-            }
         }
     }
     else
@@ -128,128 +88,80 @@
 
     <div class="form-group">
         <label for="cpOficinaOrigen">CP Oficina Origen</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputText id="cpOficinaOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.CP" />
-        }
-        else
-        {
-            <InputText id="cpOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.CP" />
-            <ValidationMessage For="@(() => paymentLetterModel.CP)" />
-        }
+
+        <InputText id="cpOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.CP" />
+        <ValidationMessage For="@(() => paymentLetterModel.CP)" />
+
 
     </div>
 
     <div class="form-group">
         <label for="calleOficinaOrigen">Calle Oficina Origen</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputText id="calleOficinaOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.Street" />
 
-        }
-        else
-        {
-            <InputText id="calleOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.Street" />
-            <ValidationMessage For="@(() => paymentLetterModel.Street)" />
-        }
+        <InputText id="calleOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.Street" />
+        <ValidationMessage For="@(() => paymentLetterModel.Street)" />
+
+
 
     </div>
 
     <div class="form-group">
         <label for="numeroCalleOficinaOrigen">Número de calle Oficina Origen</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputNumber id="numeroCalleOficinaOrigen" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
-        }
-        else
-        {
-            <InputNumber id="numeroCalleOficinaOrigen" class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
-            <ValidationMessage For="@(() => paymentLetterModel.NumberStreet)" />
-        }
+
+        <InputNumber id="numeroCalleOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
+        <ValidationMessage For="@(() => paymentLetterModel.NumberStreet)" />
+
 
     </div>
 
     <div class="form-group">
         <label for="cantidadPago">Cantidad del Pago</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputNumber id="cantidadPago" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
 
-        }
-        else
-        {
-            <InputNumber id="cantidadPago" class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
-            <ValidationMessage For="@(() => paymentLetterModel.PayAmount)" />
-        }
+
+        <InputNumber id="cantidadPago" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
+
+        <ValidationMessage For="@(() => paymentLetterModel.PayAmount)" />
 
     </div>
 
     <div class="form-group">
         <label for="cuentaDestinatario">Cuenta Destinatario (formato IBAN)</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputText class="form-control" readonly="readonly" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
-                       title="Ingrese un IBAN válido"
-                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
-        }
-        else
-        {
-            <InputText class="form-control" pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
-                       title="Ingrese un IBAN válido"
-                       placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
-            <ValidationMessage For="@(() => paymentLetterModel.DestinationAccountIBAN)" />
-        }
+
+        <InputText class="form-control" readonly=@(isGenerate) pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                   title="Ingrese un IBAN válido"
+                   placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
+        <ValidationMessage For="@(() => paymentLetterModel.DestinationAccountIBAN)" />
+
 
     </div>
 
     <div class="form-group">
         <label for="nombreBancoDestinatario">Nombre Banco Destinatario</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-        {
-            <InputText id="nombreBancoDestinatario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
 
-        }
-        else
-        {
-            <InputText id="nombreBancoDestinatario" class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
-            <ValidationMessage For="@(() => paymentLetterModel.DestinationBankName)" />
-        }
+        <InputText id="nombreBancoDestinatario" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
+        <ValidationMessage For="@(() => paymentLetterModel.DestinationBankName)" />
+
+
 
     </div>
 
     <div class="form-group">
         <label>Pais del Banco Destino</label>
-        @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+        @if (isGenerate)
         {
             <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.DestinationCountryBank" />
 
         }
         else
         {
-            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "BORRADOR")
-            {
-                <select class="form-control" @onchange="OnCountrySelectedDestination" value="@paymentLetterModel.DestinationCountryBank">
-                    <label>Pais del Banco Destino</label>
-                    <option value="">Selecciona un país</option>
-                    @foreach (var country in countries)
-                    {
-                        <option value="@country.name.common">@country.name.common</option>
-                    }
-                </select>
-            }
-            else
-            {
-                <select class="form-control" @onchange="OnCountrySelectedDestination">
-                    <label>Pais del Banco Destino</label>
-                    <option value="">Selecciona un país</option>
-                    @foreach (var country in countries)
-                    {
-                        <option value="@country.name.common">@country.name.common</option>
-                    }
-                </select>
-            }
+            <select class="form-control" @onchange="OnCountrySelectedDestination" value="@selectedCountryDestination">
 
-
+                <option value="">Selecciona un país</option>
+                @foreach (var country in countries)
+                {
+                    <option value="@country.name.common">@country.name.common</option>
+                }
+            </select>
         }
 
     </div>
@@ -262,16 +174,10 @@
         }
         else
         {
-            if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "BORRADOR")
-            {
-                <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
 
-            }
-            else
-            {
-                <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
+            <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
 
-            }
+
         }
 
 
@@ -282,42 +188,20 @@
         @if (!string.IsNullOrEmpty(selectedCountryCurrencyDestination))
         {
             <label>Divisa del banco destino:</label>
-            @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-            {
-                <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@paymentLetterModel.DestinationCurrencyBank" />
+            <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
 
-            }
-            else
-            {
-                <InputText id="currencyBankDestination" readonly="readonly" class="form-control" @bind-Value="@selectedCountryCurrencyDestination" />
 
-            }
         }
     }
 
-    @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
+
+    @if (isGenerate)
     {
         @if (paymentLetterModel.InterBankName != null && paymentLetterModel.InterBankAccountIBAN != null)
         {
             <div class="form-group">
                 <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
                 <InputText id="cuentaIntermediaria" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
-            </div>
-
-            <div class="form-group">
-                <label for="nombreBancoIntermediario">Nombre Banco Intermediario</label>
-                <InputText id="nombreBancoIntermediario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
-            </div>
-        }
-    }
-
-    @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
-    {
-        @if (paymentLetterModel.OriginCurrencyBank != paymentLetterModel.DestinationCurrencyBank)
-        {
-            <div class="form-group">
-                <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
-                <InputText id="cuentaIntermediaria" readonly="readonly"  class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankAccountIBAN)" />
             </div>
 
@@ -331,12 +215,12 @@
     }
     else
     {
-
         @if (selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination)
         {
             <div class="form-group">
+
                 <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
-                <InputText id="cuentaIntermediaria"  class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
+                <InputText id="cuentaIntermediaria" class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankAccountIBAN)" />
             </div>
 
@@ -346,8 +230,8 @@
                 <ValidationMessage For="@(() => paymentLetterModel.InterBankName)" />
             </div>
         }
-    }
 
+    }
 
     @if (paymentLetterModel != null && idPayment != 0 && paymentLetterModel.Status == "GENERADO")
     {
@@ -390,18 +274,27 @@
     string btnText = "";
     string title = "";
 
+    bool isGenerate = false;
 
     protected override async Task OnInitializedAsync()
     {
         countries = await countryService.GetCountries();
         countries = countries.OrderBy(c => c.name.common).ToList();
-
+        isGenerate = false;
 
         if (idPayment != 0)
         {
             title = "Editar/Ver Registro";
             responseAPI = await paymentLetterService.GetPaymentLetterById(idPayment);
             paymentLetterModel = responseAPI.Value!;
+            if (paymentLetterModel.Status == "GENERADO")
+            {
+                isGenerate = true;
+            }
+            else
+            {
+                isGenerate = false;
+            }
             selectedCountryCurrencyOrigin = GetCurrencies(paymentLetterModel.OriginCountryBank, countries);
             selectedCountryCurrencyDestination = GetCurrencies(paymentLetterModel.DestinationCountryBank, countries);
             selectedCountryDestination = paymentLetterModel.DestinationCountryBank;
@@ -410,7 +303,7 @@
         else
         {
             title = "Crear Emision de Pago";
-            
+
         }
 
     }
@@ -477,7 +370,7 @@
     {
 
 
-       
+
         if (idPayment == 0)
         {
             paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
@@ -527,7 +420,7 @@
                     var result = new ResponseAPI<PaymentLetterDTO>();
                     if (idPayment != 0)
                     {
-                         paymentLetterModel.Status = "GENERADO";
+                        paymentLetterModel.Status = "GENERADO";
                         result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
 
                     }
@@ -585,7 +478,7 @@
 
     private async Task SaveToDraft()
     {
-        
+
 
         if (idPayment == 0)
         {
