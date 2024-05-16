@@ -1,0 +1,26 @@
+﻿<input type="text" class="form-control" @bind="@IBAN" @oninput="CheckIBAN" placeholder="Ingrese un IBAN" maxlength="24" />
+
+@code {
+
+    string IBAN { get; set; }
+
+    private void CheckIBAN(ChangeEventArgs e)
+    {
+
+        if (e.Value.ToString().Length >= 2)
+        {
+            if (!char.IsLetter(e.Value.ToString()[0]) || !char.IsLetter(e.Value.ToString()[1]))
+            {
+
+                IBAN = e.Value.ToString().Substring(0, 2).ToUpper() + e.Value.ToString().Substring(2);
+            }
+        }
+
+
+
+
+
+
+    }
+
+}
