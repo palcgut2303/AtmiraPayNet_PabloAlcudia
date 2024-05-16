@@ -139,5 +139,24 @@ namespace AtmiraPayNet.Client.Services
             }
 
         }
+
+        
+        public async Task<ResponseAPI<string>> GetBankNameByIBAN(string iban)
+        {
+            var response = await _httpClient.GetFromJsonAsync<ResponseAPI<string>>($"api/PaymentLetter/GetBankNameByIBAN/{iban}");
+            if (response == null)
+            {
+                return new ResponseAPI<string>
+                {
+                    Successful = false,
+                    Message = "Error, no se ha podido obtener el nombre del banco",
+                };
+            }
+            return new ResponseAPI<string>
+            {
+                Successful = true,
+                Value = response.Value,
+            };
+        }
     }
 }

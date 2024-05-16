@@ -110,6 +110,19 @@ namespace AtmitaPayNet.API.Controllers
             return File(pdf, "application/pdf", "CartaDePago.pdf");
         }
 
+        [HttpGet("GetBankNameByIBAN/{iban}")]
+        public async Task<IActionResult> GetBankNameByIBAN(string iban)
+        {
+            var bankName = await _paymentLetterRepository.GetBankName(iban);
+
+            if (bankName == null)
+            {
+                return Ok(new ResponseAPI<string> { Successful = false, Message = "No se ha encontrado el nombre del banco" });
+            }
+
+            return Ok(new ResponseAPI<string> { Successful = true, Value = bankName });
+        }
+
 
     }
 }

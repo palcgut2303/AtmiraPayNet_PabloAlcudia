@@ -15,7 +15,6 @@
         font-size: 25px;
         font-weight: bold;
     }
-
 </style>
 
 <h3>@title</h3>
@@ -29,10 +28,10 @@
         <div class="card-body">
             <div class="form-group">
                 <label for="cuentaOrigen">Cuenta Origen (formato IBAN)</label>
-
                 <InputText class="form-control" readonly=@(isGenerate) pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
                            title="Ingrese un IBAN válido"
-                           placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN" />
+                           placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN"
+                           oninput=""/>
                 <ValidationMessage For="@(() => paymentLetterModel.OriginAccountIBAN)" />
             </div>
 
@@ -108,8 +107,6 @@
 
                 <InputText id="cpOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.CP" />
                 <ValidationMessage For="@(() => paymentLetterModel.CP)" />
-
-
             </div>
 
             <div class="form-group">
@@ -117,9 +114,6 @@
 
                 <InputText id="calleOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.Street" />
                 <ValidationMessage For="@(() => paymentLetterModel.Street)" />
-
-
-
             </div>
 
             <div class="form-group">
@@ -285,8 +279,8 @@
     else
     {
         <div class="mt-2 mb-2">
-            <button type="submit" class="btn btn-primary" @onclick="Generate">Generar</button>
-            <button class="btn btn-secondary" @onclick="SaveToDraft">Guardar Borrador</button>
+            <button type="submit" class="btn btn-primary" @onclick="@(()=>Submit("GENERADO"))">Generar</button>
+            <button class="btn btn-secondary" @onclick="@(()=>Submit("BORRADOR"))">Guardar Borrador</button>
         </div>
     }
 
@@ -313,6 +307,10 @@
     string selectedCountryDestination = null;
     string cca2SelectedCountryOrigin = null;
     string cca2SelectedCountryDestination = null;
+
+    string bankNameOrigin = "";
+    string bankNameDestination = "";
+    string bankNameIntermediary = "";
 
     string btnText = "";
     string title = "";
@@ -342,6 +340,9 @@
             selectedCountryCurrencyDestination = GetCurrencies(paymentLetterModel.DestinationCountryBank, countries);
             selectedCountryDestination = paymentLetterModel.DestinationCountryBank;
             selectedCountryOrigin = paymentLetterModel.OriginCountryBank;
+
+
+
         }
         else
         {
@@ -349,6 +350,23 @@
 
         }
 
+    }
+
+    private async Task GenerateBankName(string IBAN,string typeCount)
+    {
+        if (typeCount == "Origin")
+        {
+           var result = await paymentLetterService.GetBankNameByIBAN(IBAN);
+        
+        }
+        else if (typeCount == "Destination")
+        {
+
+        }
+        else
+        {
+            
+        }
     }
 
     private async void OnCountrySelectedOrigin(ChangeEventArgs e)
@@ -409,10 +427,8 @@
         return "No encontrado";
     }
 
-    private async Task Generate()
+    private async Task Submit(string tipoDocumento)
     {
-
-
 
         if (idPayment == 0)
         {
@@ -449,7 +465,7 @@
             var resultado = await Swal.FireAsync(new SweetAlertOptions
                 {
                     Title = "Información",
-                    Text = "¿Deseas generar este pago?",
+                    Text = $"¿Deseas {(tipoDocumento == "GENERADO" ? "generar" : "mandar a borradores")} este pago?",
                     Icon = SweetAlertIcon.Info,
                     ShowCancelButton = true,
                     ConfirmButtonText = "Si",
@@ -464,13 +480,13 @@
 
                     if (idPayment != 0)
                     {
-                        paymentLetterModel.Status = "GENERADO";
+                        paymentLetterModel.Status = tipoDocumento;
                         result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
 
                     }
                     else
                     {
-                        paymentLetterModel.Status = "GENERADO";
+                        paymentLetterModel.Status = tipoDocumento;
                         result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
 
                     }
@@ -482,7 +498,7 @@
                         var respuesta = await Swal.FireAsync(new SweetAlertOptions
                             {
                                 Title = "Éxito",
-                                Text = "Generado correctamente este pago",
+                                Text = $"{(tipoDocumento == "GENERADO" ? "Generado" : "Mandado a borradores")} correctamente este pago",
                                 Icon = SweetAlertIcon.Success
                             });
 
@@ -525,124 +541,6 @@
 
         }
 
-
-    }
-
-    private async Task SaveToDraft()
-    {
-
-
-
-        if (idPayment == 0)
-        {
-            paymentLetterModel.DestinationCurrencyBank = selectedCountryCurrencyDestination;
-            paymentLetterModel.OriginCurrencyBank = selectedCountryCurrencyOrigin;
-            paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
-            paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
-        }
-
-
-        if (idPayment != 0)
-        {
-            cca2SelectedCountryOrigin = GetCca2SelectedCountry(selectedCountryOrigin, countries);
-            cca2SelectedCountryDestination = GetCca2SelectedCountry(selectedCountryDestination, countries);
-        }
-
-        var isCorrect = CheckedCca2(paymentLetterModel.OriginAccountIBAN, paymentLetterModel.DestinationAccountIBAN,
-                                    cca2SelectedCountryOrigin, cca2SelectedCountryDestination);
-
-
-        var result = new ResponseAPI<PaymentLetterDTO>();
-
-        if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
-        {
-            var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Error",
-                    Text = "Rellena los campos del Banco Intermediario",
-                    Icon = SweetAlertIcon.Error
-                });
-        }
-        else
-        {
-            var resultado = await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Información",
-                    Text = "¿Deseas generar este pago?",
-                    Icon = SweetAlertIcon.Info,
-                    ShowCancelButton = true,
-                    ConfirmButtonText = "Si",
-                    CancelButtonText = "No"
-                });
-
-            if (resultado.IsConfirmed)
-            {
-                if (isCorrect)
-                {
-
-
-                    if (idPayment != 0)
-                    {
-                        paymentLetterModel.Status = "BORRADOR";
-                        result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
-
-                    }
-                    else
-                    {
-                        paymentLetterModel.Status = "BORRADOR";
-                        result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
-
-                    }
-
-                    if (result.Successful)
-                    {
-
-
-                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                            {
-                                Title = "Éxito",
-                                Text = "Generado correctamente este pago",
-                                Icon = SweetAlertIcon.Success
-                            });
-
-                        NavigationManager.NavigateTo("/paymentletterview");
-
-
-                    }
-                    else
-                    {
-                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                            {
-                                Title = "Error",
-                                Text = result.Message,
-                                Icon = SweetAlertIcon.Error
-                            });
-
-                    }
-                }
-                else
-                {
-
-                    var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                        {
-                            Title = "Error",
-                            Text = "Error, el cca2 no coincide con el codigo del iban",
-                            Icon = SweetAlertIcon.Error
-                        });
-
-                }
-
-
-
-
-            }
-            else
-            {
-                return;
-            }
-
-
-        }
 
     }
 

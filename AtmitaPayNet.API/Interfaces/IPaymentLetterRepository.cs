@@ -9,6 +9,7 @@ namespace AtmitaPayNet.API.Interfaces
         Task<ResponseAPI<PaymentLetterDTO>> Create(CreateRequestPaymentLetter model);
         List<PaymentLetterDTO> GetAll();
         Task<List<PaymentListAttribute>> GetAttributePayment();
+        Task<string> GetBankName(string IBAN);
         Task<CreateRequestPaymentLetter> GetById(int id);
         Task<ResponseAPI<PaymentLetterDTO>> Update(int id, CreateRequestPaymentLetter model);
     }

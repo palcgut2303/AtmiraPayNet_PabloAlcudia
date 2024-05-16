@@ -200,5 +200,14 @@ namespace AtmitaPayNet.API.Repositories
             return new ResponseAPI<PaymentLetterDTO> { Successful = true, Value = paymentLetter.toPaymentLetterDTO() };
         }
 
+        public async Task<string> GetBankName(string IBAN)
+        {
+            var IBANBank = new IBAN(IBAN);
+
+            var bankName = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANBank).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
+
+            return bankName;
+        }
+
     }
 }
