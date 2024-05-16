@@ -111,7 +111,7 @@ namespace AtmiraPayNet.Client.Services
                 return new ResponseAPI<PaymentLetterDTO>
                 {
                     Successful = false,
-                    Message = "Error, no se ha podido crear la carta de pago",
+                    Message = "Error, no se ha podido actualizar la carta de pago",
                 };
             }
         }

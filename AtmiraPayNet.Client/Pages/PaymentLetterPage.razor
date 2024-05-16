@@ -13,9 +13,8 @@
 <style>
     .card-title {
         font-size: 25px;
-        font-weight: bold; 
+        font-weight: bold;
     }
-
 
 </style>
 
@@ -434,33 +433,35 @@
                                     cca2SelectedCountryOrigin, cca2SelectedCountryDestination);
 
 
+        var result = new ResponseAPI<PaymentLetterDTO>();
 
-        if (isCorrect)
+        if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
         {
-            if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
-            {
-                var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Error",
-                        Text = "Rellena los campos del Banco Intermediario",
-                        Icon = SweetAlertIcon.Error
-                    });
-            }
-            else
-            {
-                var resultado = await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Información",
-                        Text = "¿Deseas generar este pago?",
-                        Icon = SweetAlertIcon.Info,
-                        ShowCancelButton = true,
-                        ConfirmButtonText = "Si",
-                        CancelButtonText = "No"
-                    });
-
-                if (resultado.IsConfirmed)
+            var respuesta = await Swal.FireAsync(new SweetAlertOptions
                 {
-                    var result = new ResponseAPI<PaymentLetterDTO>();
+                    Title = "Error",
+                    Text = "Rellena los campos del Banco Intermediario",
+                    Icon = SweetAlertIcon.Error
+                });
+        }
+        else
+        {
+            var resultado = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Información",
+                    Text = "¿Deseas generar este pago?",
+                    Icon = SweetAlertIcon.Info,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Si",
+                    CancelButtonText = "No"
+                });
+
+            if (resultado.IsConfirmed)
+            {
+                if (isCorrect)
+                {
+
+
                     if (idPayment != 0)
                     {
                         paymentLetterModel.Status = "GENERADO";
@@ -476,6 +477,8 @@
 
                     if (result.Successful)
                     {
+
+
                         var respuesta = await Swal.FireAsync(new SweetAlertOptions
                             {
                                 Title = "Éxito",
@@ -492,7 +495,7 @@
                         var respuesta = await Swal.FireAsync(new SweetAlertOptions
                             {
                                 Title = "Error",
-                                Text = "Error, no generado el pdf",
+                                Text = result.Message,
                                 Icon = SweetAlertIcon.Error
                             });
 
@@ -500,27 +503,34 @@
                 }
                 else
                 {
-                    return;
+
+                    var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Error",
+                            Text = "Error, el cca2 no coincide con el codigo del iban",
+                            Icon = SweetAlertIcon.Error
+                        });
+
                 }
 
 
+
+
             }
-        }
-        else
-        {
+            else
+            {
+                return;
+            }
 
-            var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Error",
-                    Text = "Error, el cca2 no coincide con el codigo del iban",
-                    Icon = SweetAlertIcon.Error
-                });
 
         }
+
+
     }
 
     private async Task SaveToDraft()
     {
+
 
 
         if (idPayment == 0)
@@ -531,43 +541,46 @@
             paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
         }
 
+
         if (idPayment != 0)
         {
-            cca2SelectedCountryOrigin = GetCca2SelectedCountry(paymentLetterModel.OriginCountryBank, countries);
-            cca2SelectedCountryDestination = GetCca2SelectedCountry(paymentLetterModel.DestinationCountryBank, countries);
+            cca2SelectedCountryOrigin = GetCca2SelectedCountry(selectedCountryOrigin, countries);
+            cca2SelectedCountryDestination = GetCca2SelectedCountry(selectedCountryDestination, countries);
         }
 
         var isCorrect = CheckedCca2(paymentLetterModel.OriginAccountIBAN, paymentLetterModel.DestinationAccountIBAN,
                                     cca2SelectedCountryOrigin, cca2SelectedCountryDestination);
 
 
+        var result = new ResponseAPI<PaymentLetterDTO>();
 
-        if (isCorrect)
+        if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
         {
-            if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
-            {
-                var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Error",
-                        Text = "Rellena todos los datos",
-                        Icon = SweetAlertIcon.Error
-                    });
-            }
-            else
-            {
-                var resultado = await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Información",
-                        Text = "¿Deseas generar este pago?",
-                        Icon = SweetAlertIcon.Info,
-                        ShowCancelButton = true,
-                        ConfirmButtonText = "Si",
-                        CancelButtonText = "No"
-                    });
-
-                if (resultado.IsConfirmed)
+            var respuesta = await Swal.FireAsync(new SweetAlertOptions
                 {
-                    var result = new ResponseAPI<PaymentLetterDTO>();
+                    Title = "Error",
+                    Text = "Rellena los campos del Banco Intermediario",
+                    Icon = SweetAlertIcon.Error
+                });
+        }
+        else
+        {
+            var resultado = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Información",
+                    Text = "¿Deseas generar este pago?",
+                    Icon = SweetAlertIcon.Info,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Si",
+                    CancelButtonText = "No"
+                });
+
+            if (resultado.IsConfirmed)
+            {
+                if (isCorrect)
+                {
+
+
                     if (idPayment != 0)
                     {
                         paymentLetterModel.Status = "BORRADOR";
@@ -583,13 +596,17 @@
 
                     if (result.Successful)
                     {
+
+
                         var respuesta = await Swal.FireAsync(new SweetAlertOptions
                             {
                                 Title = "Éxito",
-                                Text = "Mandado a borradores.",
+                                Text = "Generado correctamente este pago",
                                 Icon = SweetAlertIcon.Success
                             });
+
                         NavigationManager.NavigateTo("/paymentletterview");
+
 
                     }
                     else
@@ -597,31 +614,35 @@
                         var respuesta = await Swal.FireAsync(new SweetAlertOptions
                             {
                                 Title = "Error",
-                                Text = "Error, no mandado a borradores",
+                                Text = result.Message,
                                 Icon = SweetAlertIcon.Error
                             });
+
                     }
                 }
                 else
                 {
-                    return;
+
+                    var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Error",
+                            Text = "Error, el cca2 no coincide con el codigo del iban",
+                            Icon = SweetAlertIcon.Error
+                        });
+
                 }
 
 
+
+
             }
-        }
-        else
-        {
+            else
+            {
+                return;
+            }
 
-            var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Error",
-                    Text = "Error, el cca2 no coincide con el codigo del iban",
-                    Icon = SweetAlertIcon.Error
-                });
 
         }
-
 
     }
 
