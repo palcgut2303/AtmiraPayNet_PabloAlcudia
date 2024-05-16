@@ -27,7 +27,7 @@ namespace AtmitaPayNet.API.Models
 
         //Bank Inter
         public string? InterBankIBAN { get; set; }
-        public string NameBankInter { get; set; }
+        public string? NameBankInter { get; set; }
 
         public int PaymentAmount { get; set; }
         public string? PDF { get; set; }
