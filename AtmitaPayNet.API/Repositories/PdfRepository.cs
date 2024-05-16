@@ -18,7 +18,7 @@ namespace AtmitaPayNet.API.Repositories
             _contextDb = contextDb;
         }
 
-        public string GeneratePdf(PaymentLetterDTO paymentLetter, string bankAccountNameDestination, string bankAccountNameOrigin, string bankAccountNameInter)
+        public string GeneratePdf(PaymentLetterDTO paymentLetter)
         {
             try
             {
@@ -31,9 +31,9 @@ namespace AtmitaPayNet.API.Repositories
                             using (Document document = new Document(pdfDocument))
                             {
                                 document.Add(new Paragraph("Payment Letter Details:"));
-                                document.Add(new Paragraph($"Origin Bank Name: {bankAccountNameOrigin}"));
-                                document.Add(new Paragraph($"Destination Bank Name: {bankAccountNameDestination}"));
-                                document.Add(new Paragraph($"Inter Bank Name: {bankAccountNameInter ?? "No hay"}"));
+                                document.Add(new Paragraph($"Origin Bank Name: {paymentLetter.NameBankOrigin}"));
+                                document.Add(new Paragraph($"Destination Bank Name: {paymentLetter.NameBankDestination}"));
+                                document.Add(new Paragraph($"Inter Bank Name: {paymentLetter.NameBankInter ?? "No hay"}"));
                                 document.Add(new Paragraph($"Payment Amount: {paymentLetter.PaymentAmount}"));
                                 document.Add(new Paragraph($"Status: {paymentLetter.Status ?? "N/A"}"));
                                 document.Add(new Paragraph($"Date: {paymentLetter.Date}"));

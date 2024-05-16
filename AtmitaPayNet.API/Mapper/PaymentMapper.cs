@@ -13,20 +13,27 @@ namespace AtmitaPayNet.API.Mapper
 
             return new PaymentLetterDTO
             {
-                Id = model.Id,
                 Address = new AddressDTO
                 {
                     CP = model.Address.CP,
                     NumberStreet = model.Address.NumberStreet,
                     Street = model.Address.Street
                 },
-                DestinationBankId = model.DestinationBankId,
-                OriginBankId = model.OriginBankId,
-                InterBankId = model.InterBankId,
+                OriginBankIBAN = model.OriginBankIBAN,
+                NameBankOrigin = model.NameBankOrigin,
+                CountryBankAccountOrigin = model.CountryBankAccountOrigin,
+                CurrencyBankAccountOrigin = model.CurrencyBankAccountOrigin,
+                DestinationBankIBAN = model.DestinationBankIBAN,
+                NameBankDestination = model.NameBankDestination,
+                CountryBankAccountDestination = model.CountryBankAccountDestination,
+                CurrencyBankAccountDestination = model.CurrencyBankAccountDestination,
+                InterBankIBAN = model.InterBankIBAN,
+                NameBankInter = model.NameBankInter,
+
                 PaymentAmount = model.PaymentAmount,
-                PDF = model.PDF,
-                Date = model.Date,
-                Status = model.Status
+                Status = model.Status,
+                Date = DateTime.Now,
+                PDF = model.PDF
             };
         }
     }

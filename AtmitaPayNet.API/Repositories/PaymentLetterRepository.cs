@@ -32,22 +32,19 @@ namespace AtmitaPayNet.API.Repositories
         public async Task<CreateRequestPaymentLetter> GetById(int id)
         {
             var paymentLetter = await _contextDb.PaymentLetters.Where(x => x.Id == id)
-                .Include(x => x.OriginBank)
-                .Include(x => x.DestinationBank)
-                .Include(x => x.InterBank)
-                .Include(x => x.Address).Select(x => new CreateRequestPaymentLetter
+                .Select(x => new CreateRequestPaymentLetter
             {
                 CP = x.Address.CP,
-                DestinationAccountIBAN = x.DestinationBank.IBANBankAccount.IBANBankAccount,
-                InterBankAccountIBAN = x.InterBankId != null ? x.InterBank.IBANBankAccount.IBANBankAccount : null,
-                OriginAccountIBAN = x.OriginBank.IBANBankAccount.IBANBankAccount,
-                DestinationBankName = x.DestinationBank.Bank.Name,
-                OriginBankName = x.OriginBank.Bank.Name,
-                InterBankName = x.InterBankId != null ? x.InterBank.Bank.Name : null,
-                DestinationCountryBank = x.DestinationBank.CountryBankAccount,
-                OriginCountryBank = x.OriginBank.CountryBankAccount,
-                OriginCurrencyBank = x.OriginBank.CurrencyBankAccount,
-                DestinationCurrencyBank = x.DestinationBank.CurrencyBankAccount,
+                DestinationAccountIBAN = x.DestinationBankIBAN,
+                InterBankAccountIBAN = x.InterBankIBAN != null ? x.InterBankIBAN : null,
+                OriginAccountIBAN = x.OriginBankIBAN,
+                DestinationBankName = x.NameBankDestination,
+                OriginBankName = x.NameBankOrigin,
+                InterBankName = x.NameBankInter != null ? x.NameBankInter : null,
+                DestinationCountryBank = x.CountryBankAccountDestination,
+                OriginCountryBank = x.CountryBankAccountOrigin,
+                OriginCurrencyBank = x.CurrencyBankAccountOrigin,
+                DestinationCurrencyBank = x.CurrencyBankAccountDestination,
                 NumberStreet = x.Address.NumberStreet,
                 Street = x.Address.Street,
                 PayAmount = x.PaymentAmount,
@@ -63,18 +60,7 @@ namespace AtmitaPayNet.API.Repositories
 
         public async Task<ResponseAPI<PaymentLetterDTO>> Create(CreateRequestPaymentLetter model)
         {
-            var IBANDestination = new IBAN(model.DestinationAccountIBAN);
-            var IBANInter = new IBAN(model.InterBankAccountIBAN);
-            var IBANOrigin = new IBAN(model.OriginAccountIBAN);
-
-            var idDestinationBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANDestination).Select(x => x.Id).FirstOrDefaultAsync();
-            var idOriginBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANOrigin).Select(x => x.Id).FirstOrDefaultAsync();
-            var idInterBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANInter).Select(x => x.Id).FirstOrDefaultAsync();
-
-            if (idDestinationBankAccount == 0 || idOriginBankAccount == 0)
-            {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message ="La cuenta de banco origen o de destino no existe" };
-            }
+          
 
             var paymentLetter = new PaymentLetter
             {
@@ -84,32 +70,28 @@ namespace AtmitaPayNet.API.Repositories
                     NumberStreet = model.NumberStreet,
                     Street = model.Street
                 },
-                DestinationBankId = idDestinationBankAccount,
-                OriginBankId = idOriginBankAccount,
-                InterBankId = idInterBankAccount != 0 ? idInterBankAccount : null,
+                OriginBankIBAN = model.OriginAccountIBAN,
+                NameBankOrigin = model.OriginBankName,
+                CountryBankAccountOrigin = model.OriginCountryBank,
+                CurrencyBankAccountOrigin = model.OriginCurrencyBank,
+                DestinationBankIBAN = model.DestinationAccountIBAN,
+                NameBankDestination = model.DestinationBankName,
+                CountryBankAccountDestination = model.DestinationCountryBank,
+                CurrencyBankAccountDestination = model.DestinationCurrencyBank,
+                InterBankIBAN = model.InterBankAccountIBAN,
+                NameBankInter = model.InterBankName,
+
                 PaymentAmount = model.PayAmount,
                 Status = model.Status,
                 Date = DateTime.Now
             };
 
-            var bankAccountNameDestination = await _contextDb.BankAccounts.Where(x => x.Id == idDestinationBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
-            var bankAccountNameOrigin = await _contextDb.BankAccounts.Where(x => x.Id == idOriginBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
-            var bankAccountNameInter = idInterBankAccount != 0 ? await _contextDb.BankAccounts.Where(x => x.Id == idInterBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync() : null;
-
-            if (bankAccountNameDestination == null || bankAccountNameOrigin == null)
-            {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "El Banco de origen o de destino no existe" };
-            }
-            else if (idInterBankAccount != 0 && bankAccountNameInter == null)
-            {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "El Banco inter no existe" };
-            }
-            
+           
             
             if (paymentLetter.Status == "GENERADO")
             {
                 
-                var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO(), bankAccountNameDestination, bankAccountNameOrigin, bankAccountNameInter);
+                var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO());
 
                 paymentLetter.PDF = pdf;
             }
@@ -126,12 +108,12 @@ namespace AtmitaPayNet.API.Repositories
 
         public async Task<List<PaymentListAttribute>> GetAttributePayment()
         {
-            var result = await _contextDb.PaymentLetters.Include(x => x.OriginBank).Include(x => x.DestinationBank).Select(x => new PaymentListAttribute
+            var result = await _contextDb.PaymentLetters.Select(x => new PaymentListAttribute
             {
                 Id = x.Id,
-                OriginBankName = x.OriginBank.Bank.Name,
-                currency = x.OriginBank.CurrencyBankAccount,
-                DestinationBankName = x.DestinationBank.Bank.Name,
+                OriginBankName = x.NameBankOrigin,
+                currency = x.CurrencyBankAccountOrigin,
+                DestinationBankName = x.NameBankDestination,
                 status = x.Status!,
                 PayAmount = x.PaymentAmount
             }).ToListAsync();
@@ -150,44 +132,32 @@ namespace AtmitaPayNet.API.Repositories
                 return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "No se ha encontrado la carta de pago" };
             }
 
-            var IBANDestination = new IBAN(model.DestinationAccountIBAN);
-            var IBANInter = new IBAN(model.InterBankAccountIBAN);
-            var IBANOrigin = new IBAN(model.OriginAccountIBAN);
-
-            var idDestinationBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANDestination).Select(x => x.Id).FirstOrDefaultAsync();
-            var idOriginBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANOrigin).Select(x => x.Id).FirstOrDefaultAsync();
-            var idInterBankAccount = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANInter).Select(x => x.Id).FirstOrDefaultAsync();
-
-            if (idDestinationBankAccount == 0 || idOriginBankAccount == 0)
-            {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "El Banco de origen o de destino no existe" };
-            }
 
             paymentLetter.Address.CP = model.CP;
             paymentLetter.Address.NumberStreet = model.NumberStreet;
             paymentLetter.Address.Street = model.Street;
-            paymentLetter.DestinationBankId = idDestinationBankAccount;
-            paymentLetter.OriginBankId = idOriginBankAccount;
-            paymentLetter.InterBankId = idInterBankAccount != 0 ? idInterBankAccount : null;
+            //Destination
+            paymentLetter.DestinationBankIBAN = model.DestinationAccountIBAN;
+            paymentLetter.CurrencyBankAccountDestination = model.DestinationCurrencyBank;
+            paymentLetter.CountryBankAccountDestination = model.DestinationCountryBank;
+            paymentLetter.NameBankDestination = model.DestinationBankName;
+            //Origin
+            paymentLetter.OriginBankIBAN = model.OriginAccountIBAN;
+            paymentLetter.CountryBankAccountOrigin = model.OriginCountryBank;
+            paymentLetter.CurrencyBankAccountOrigin = model.OriginCurrencyBank;
+            paymentLetter.NameBankOrigin = model.OriginBankName;
+            //Inter
+            paymentLetter.NameBankInter = model.InterBankName != null ? model.InterBankName : null;
+            paymentLetter.InterBankIBAN = model.InterBankAccountIBAN != null ? model.InterBankAccountIBAN : null;
+
             paymentLetter.PaymentAmount = model.PayAmount;
             paymentLetter.Status = model.Status;
 
-            var bankAccountNameDestination = await _contextDb.BankAccounts.Where(x => x.Id == idDestinationBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
-            var bankAccountNameOrigin = await _contextDb.BankAccounts.Where(x => x.Id == idOriginBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
-            var bankAccountNameInter = idInterBankAccount != 0 ? await _contextDb.BankAccounts.Where(x => x.Id == idInterBankAccount).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync() : null;
-
-            if (bankAccountNameDestination == null || bankAccountNameOrigin == null)
-            {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "El Banco de origen o de destino no existe" };
-            }
-            else if (idInterBankAccount != 0 && bankAccountNameInter == null)
-            {
-                return new ResponseAPI<PaymentLetterDTO> { Successful = false, Message = "El Banco inter no existe" };
-            }
+           
 
             if (paymentLetter.Status == "GENERADO")
             {
-                var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO(), bankAccountNameDestination, bankAccountNameOrigin, bankAccountNameInter);
+                var pdf = _pdfRepository.GeneratePdf(paymentLetter.toPaymentLetterDTO());
 
                 paymentLetter.PDF = pdf;
             }
@@ -202,9 +172,8 @@ namespace AtmitaPayNet.API.Repositories
 
         public async Task<string> GetBankName(string IBAN)
         {
-            var IBANBank = new IBAN(IBAN);
-
-            var bankName = await _contextDb.BankAccounts.Where(x => x.IBANBankAccount == IBANBank).Include(x => x.Bank).Select(x => x.Bank.Name).FirstOrDefaultAsync();
+           
+            var bankName = await _contextDb.PaymentLetters.Where(x => x.OriginBankIBAN == IBAN).Select(x => x.NameBankOrigin).FirstOrDefaultAsync();
 
             return bankName;
         }

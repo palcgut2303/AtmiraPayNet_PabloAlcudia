@@ -6,7 +6,7 @@ namespace AtmitaPayNet.API.Interfaces
 {
     public interface IPDFRepository
     {
-        string GeneratePdf(PaymentLetterDTO paymentLetter, string bankAccountNameDestination, string bankAccountNameOrigin, string bankAccountNameInter);
+        string GeneratePdf(PaymentLetterDTO paymentLetter);
         byte[] GetPdf(int idPayment);
     }
 }

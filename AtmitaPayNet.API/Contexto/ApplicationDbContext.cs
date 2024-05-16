@@ -18,31 +18,6 @@ namespace AtmitaPayNet.API.Contexto
 
             modelBuilder.Entity<PaymentLetter>().OwnsOne(p => p.Address, p => p.ToJson());
 
-            modelBuilder.Entity<BankAccount>()
-                .Property(v => v.IBANBankAccount)
-                .HasConversion(
-                       v => v.IBANBankAccount,
-                       v => new IBAN(v)
-                       
-                       );
-
-            modelBuilder.Entity<PaymentLetter>()
-               .HasOne(p => p.OriginBank)
-               .WithMany(b => b.OriginPayment)
-               .HasForeignKey(p => p.OriginBankId)
-               .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<PaymentLetter>()
-                    .HasOne(p => p.DestinationBank)
-                    .WithMany(b => b.DestinationPayment)
-                    .HasForeignKey(p => p.DestinationBankId)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<PaymentLetter>()
-                .HasOne(p => p.InterBank)
-                .WithMany(b => b.InterPayment)
-                .HasForeignKey(p => p.InterBankId)
-                .OnDelete(DeleteBehavior.NoAction);
 
             List<IdentityRole> roles = new List<IdentityRole>
         {
@@ -54,8 +29,6 @@ namespace AtmitaPayNet.API.Contexto
         }
 
         public DbSet<PaymentLetter> PaymentLetters { get; set; }
-        public DbSet<Bank> Banks { get; set; }
-        public DbSet<BankAccount> BankAccounts { get; set; }
 
     }
 }

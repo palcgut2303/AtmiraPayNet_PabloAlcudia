@@ -8,30 +8,35 @@ namespace AtmiraPayNet.Shared.EntityDTO
 {
     public class PaymentLetterDTO
     {
+
         public int Id { get; set; }
+
+        //JSON Column Address
         public AddressDTO Address { get; set; }
 
-        //Relationship with OriginBank
-        public int OriginBankId { get; set; }
-        public BankAccountDTO? OriginBank { get; set; }
 
-        //Relationship with DestinationBank
-        public int DestinationBankId { get; set; }
-        public BankAccountDTO? DestinationBank { get; set; }
+        //Bank Origin
+        public string OriginBankIBAN { get; set; }
 
-        //Relationship with DestinationBank
-        public int? InterBankId { get; set; }
-        public BankAccountDTO? InterBank { get; set; }
+        public string NameBankOrigin { get; set; }
+        public string CountryBankAccountOrigin { get; set; }
+        public string CurrencyBankAccountOrigin { get; set; }
+        //Bank Destination
+        public string DestinationBankIBAN { get; set; }
+        public string NameBankDestination { get; set; }
+        public string CountryBankAccountDestination { get; set; }
+        public string CurrencyBankAccountDestination { get; set; }
 
-        //Data of the Payment Letter
+        //Bank Inter
+        public string? InterBankIBAN { get; set; }
+        public string NameBankInter { get; set; }
+
         public int PaymentAmount { get; set; }
-
+        public string? PDF { get; set; }
         public string? Status { get; set; }
 
         public DateTime? Date { get; set; }
 
-        public string? PDF { get; set; }
 
-        
     }
 }
