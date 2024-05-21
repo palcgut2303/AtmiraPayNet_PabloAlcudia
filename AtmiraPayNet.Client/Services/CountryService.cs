@@ -21,23 +21,22 @@ namespace AtmiraPayNet.Client.Services
 
         public async Task<List<CountryInfo>> GetCountries()
         {
-            //var response = await _httpClient.GetAsync("https://restcountries.com/v3.1/all?fields=name,currencies,cca2");
+            var response = await _httpClient.GetAsync("https://run.mocky.io/v3/7fe4c4e2-06f7-4803-843b-5e2297308043");
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    var jsonRepos = await response.Content.ReadAsStringAsync();
-            //    var repos = System.Text.Json.JsonSerializer.Deserialize<List<CountryInfo>>(jsonRepos);
-            //    return repos;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
-
-            List<CountryInfo> repos;
-                repos = System.Text.Json.JsonSerializer.Deserialize<List<CountryInfo>>(GetMockJson());
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonRepos = await response.Content.ReadAsStringAsync();
+                var repos = System.Text.Json.JsonSerializer.Deserialize<List<CountryInfo>>(jsonRepos);
                 return repos;
+            }
+            else
+            {
+                return null;
+            }
 
+            ////List<CountryInfo> repos;
+            ////    repos = System.Text.Json.JsonSerializer.Deserialize<List<CountryInfo>>(GetMockJson());
+            ////    return repos;
 
         }
 

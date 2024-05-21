@@ -30,7 +30,7 @@ namespace AtmitaPayNet.API.Repositories
                         {
                             using (Document document = new Document(pdfDocument))
                             {
-                                document.Add(new Paragraph("Payment Letter Details:"));
+                                document.Add(new Paragraph("Payment Letter Details"));
                                 document.Add(new Paragraph($"Origin Bank Name: {paymentLetter.NameBankOrigin}"));
                                 document.Add(new Paragraph($"Destination Bank Name: {paymentLetter.NameBankDestination}"));
                                 document.Add(new Paragraph($"Inter Bank Name: {paymentLetter.NameBankInter ?? "No hay"}"));

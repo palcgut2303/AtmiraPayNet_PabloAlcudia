@@ -1,5 +1,6 @@
 ﻿@page "/payment-letter"
 @page "/payment-letter/{idPayment:int}"
+@using IbanNet
 
 
 @inject ICountryService countryService
@@ -29,10 +30,10 @@
         <div class="card-body">
             <div class="form-group">
                 <label for="cuentaOrigen">Cuenta Origen (formato IBAN)</label>
-                <InputText class="form-control" readonly=@(isGenerate) pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                <InputText class="form-control" readonly=@(isGenerate)
                            title="Ingrese un IBAN válido"
                            placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN"
-                           oninput=""/>
+                           oninput="" />
                 <ValidationMessage For="@(() => paymentLetterModel.OriginAccountIBAN)" />
             </div>
 
@@ -146,7 +147,7 @@
             <div class="form-group">
                 <label for="cuentaDestinatario">Cuenta Destinatario (formato IBAN)</label>
 
-                <InputText class="form-control" readonly=@(isGenerate) pattern="[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}"
+                <InputText class="form-control" readonly=@(isGenerate)
                            title="Ingrese un IBAN válido"
                            placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
                 <ValidationMessage For="@(() => paymentLetterModel.DestinationAccountIBAN)" />
@@ -353,22 +354,6 @@
 
     }
 
-    private async Task GenerateBankName(string IBAN,string typeCount)
-    {
-        if (typeCount == "Origin")
-        {
-           var result = await paymentLetterService.GetBankNameByIBAN(IBAN);
-        
-        }
-        else if (typeCount == "Destination")
-        {
-
-        }
-        else
-        {
-            
-        }
-    }
 
     private async void OnCountrySelectedOrigin(ChangeEventArgs e)
     {
@@ -477,46 +462,43 @@
             {
                 if (isCorrect)
                 {
+                        if (idPayment != 0)
+                        {
+                            paymentLetterModel.Status = tipoDocumento;
+                            result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
+
+                        }
+                        else
+                        {
+                            paymentLetterModel.Status = tipoDocumento;
+                            result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
+
+                        }
+
+                        if (result.Successful)
+                        {
+
+                            var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                                {
+                                    Title = "Éxito",
+                                    Text = $"{(tipoDocumento == "GENERADO" ? "Generado" : "Mandado a borradores")} correctamente este pago",
+                                    Icon = SweetAlertIcon.Success
+                                });
+
+                            NavigationManager.NavigateTo("/paymentletterview");
 
 
-                    if (idPayment != 0)
-                    {
-                        paymentLetterModel.Status = tipoDocumento;
-                        result = await paymentLetterService.PutPaymentLetter(paymentLetterModel, idPayment);
+                        }
+                        else
+                        {
+                            var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                                {
+                                    Title = "Error",
+                                    Text = result.Message,
+                                    Icon = SweetAlertIcon.Error
+                                });
 
-                    }
-                    else
-                    {
-                        paymentLetterModel.Status = tipoDocumento;
-                        result = await paymentLetterService.PostPaymentLetter(paymentLetterModel);
-
-                    }
-
-                    if (result.Successful)
-                    {
-
-
-                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                            {
-                                Title = "Éxito",
-                                Text = $"{(tipoDocumento == "GENERADO" ? "Generado" : "Mandado a borradores")} correctamente este pago",
-                                Icon = SweetAlertIcon.Success
-                            });
-
-                        NavigationManager.NavigateTo("/paymentletterview");
-
-
-                    }
-                    else
-                    {
-                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                            {
-                                Title = "Error",
-                                Text = result.Message,
-                                Icon = SweetAlertIcon.Error
-                            });
-
-                    }
+                        }
                 }
                 else
                 {
@@ -529,10 +511,6 @@
                         });
 
                 }
-
-
-
-
             }
             else
             {
@@ -562,7 +540,4 @@
             return false;
         }
     }
-
-
-
 }
