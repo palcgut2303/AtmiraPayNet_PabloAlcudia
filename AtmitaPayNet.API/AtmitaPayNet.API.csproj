@@ -26,4 +26,10 @@
     <ProjectReference Include="..\AtmiraPayNet.Shared\AtmiraPayNet.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Assert\APICountries.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

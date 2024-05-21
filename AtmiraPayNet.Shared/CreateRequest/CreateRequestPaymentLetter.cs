@@ -10,6 +10,7 @@ namespace AtmiraPayNet.Shared.CreateRequest
     public class CreateRequestPaymentLetter
     {
         [Required(ErrorMessage = "La cuenta origen en formato IBAN es requerida")]
+
         public string OriginAccountIBAN { get; set; }
         [Required(ErrorMessage = "El nombre del banco origen es obligatorio")]
 
@@ -46,4 +47,7 @@ namespace AtmiraPayNet.Shared.CreateRequest
 
 
     }
+
+
+
 }
