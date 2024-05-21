@@ -435,6 +435,8 @@
                                     cca2SelectedCountryOrigin, cca2SelectedCountryDestination);
 
 
+        var isEquals = CompareIBAN(paymentLetterModel.OriginAccountIBAN, paymentLetterModel.DestinationAccountIBAN, paymentLetterModel.InterBankAccountIBAN);
+
         var result = new ResponseAPI<PaymentLetterDTO>();
 
         if ((selectedCountryCurrencyOrigin != selectedCountryCurrencyDestination) && (paymentLetterModel.InterBankAccountIBAN == null || paymentLetterModel.InterBankName == null))
@@ -460,8 +462,20 @@
 
             if (resultado.IsConfirmed)
             {
-                if (isCorrect)
+                if (!isEquals)
                 {
+                    var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Title = "Error",
+                            Text = "Error, las cuentas no pueden ser iguales",
+                            Icon = SweetAlertIcon.Error
+                        });
+                    return;
+                }
+                else
+                {
+                    if (isCorrect)
+                    {
                         if (idPayment != 0)
                         {
                             paymentLetterModel.Status = tipoDocumento;
@@ -499,18 +513,20 @@
                                 });
 
                         }
-                }
-                else
-                {
+                    }
+                    else
+                    {
 
-                    var respuesta = await Swal.FireAsync(new SweetAlertOptions
-                        {
-                            Title = "Error",
-                            Text = "Error, el cca2 no coincide con el codigo del iban",
-                            Icon = SweetAlertIcon.Error
-                        });
+                        var respuesta = await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = "Error",
+                                Text = "Error, el cca2 no coincide con el codigo del iban",
+                                Icon = SweetAlertIcon.Error
+                            });
 
+                    }
                 }
+
             }
             else
             {
@@ -539,5 +555,36 @@
         {
             return false;
         }
+    }
+
+
+    private bool CompareIBAN(string ibanOrigin, string ibanDestination, string ibanIntermediario)
+    {
+        if (ibanIntermediario != null)
+        {
+            if (ibanOrigin == ibanDestination || ibanOrigin == ibanIntermediario || ibanDestination == ibanIntermediario)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if (ibanOrigin == ibanDestination)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+
+
     }
 }

@@ -44,10 +44,10 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/CurrieTechnologies.Razor.SweetAlert2/sweetAlert2.min.js"></script>
     <script>
-        function downloadFile(model) {
+        function downloadFile(model,id) {
             const link = document.createElement('a');
             link.href = `data:application/pdf;base64,${model}`;
-            link.download = "CartaDePago.pdf";
+            link.download = "CartaDePago_" + id +".pdf";
             link.click();
         }
     </script>

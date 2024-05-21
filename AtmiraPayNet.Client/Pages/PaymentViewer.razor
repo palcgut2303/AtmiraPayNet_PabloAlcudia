@@ -101,7 +101,7 @@
         var model = result.Value!;
         if (result.Successful)
         {
-            await JSRuntime.InvokeVoidAsync("downloadFile", model);
+            await JSRuntime.InvokeVoidAsync("downloadFile", new object[] {model,id.ToString()  });
         }
     }
 

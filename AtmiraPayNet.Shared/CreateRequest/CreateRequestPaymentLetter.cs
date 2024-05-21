@@ -33,9 +33,11 @@ namespace AtmiraPayNet.Shared.CreateRequest
 
 
         [Required(ErrorMessage = "El numero de calle es obligatorio")]
+        [Range(0, int.MaxValue, ErrorMessage = "El numero de calle debe ser positivo")]
         public int NumberStreet { get; set; }
 
         [Required(ErrorMessage = "La cantidad es obligatoria")]
+        [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor que 0")]
         public int PayAmount { get; set; }
 
         [Required(ErrorMessage = "La cuenta destino en formato IBAN es requerida")]
