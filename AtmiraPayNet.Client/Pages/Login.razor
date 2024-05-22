@@ -22,7 +22,7 @@
     <div class="d-flex flex-row align-items-center mb-4">
         <i class="bi bi-envelope-at-fill me-3"></i>
         <div data-mdb-input-init class="form-outline flex-fill mb-0">
-            <InputText Id="email" Class="form-control" @bind-Value="loginModel.Email" />
+            <InputText Id="emailLogin" Class="form-control" @bind-Value="loginModel.Email" />
             <ValidationMessage For="@(() => loginModel.Email)" />
             <label class="form-label" for="form3Example3c">Email</label>
         </div>
@@ -31,7 +31,7 @@
     <div class="d-flex flex-row align-items-center mb-4">
         <i class="bi bi-lock-fill me-3"></i>
         <div data-mdb-input-init class="form-outline flex-fill mb-0">
-            <InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
+            <InputText Id="passwordLogin" type="password" Class="form-control" @bind-Value="loginModel.Password" />
             <ValidationMessage For="@(() => loginModel.Password)" />
             <label class="form-label" for="form3Example4c">Password</label>
         </div>
@@ -40,7 +40,7 @@
 
     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
 
-        <button type="submit" class="btn" style="background-color: rgb(222, 29, 122); color: white;">Iniciar Sesion</button>
+        <button id="btnLogin" type="submit" class="btn" style="background-color: rgb(222, 29, 122); color: white;">Iniciar Sesion</button>
     </div>
 
 

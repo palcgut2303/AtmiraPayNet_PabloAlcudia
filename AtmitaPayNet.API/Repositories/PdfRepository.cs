@@ -35,7 +35,6 @@ namespace AtmitaPayNet.API.Repositories
                                 title.SetBold();
                                 title.SetFontSize(20);
                                 title.SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER);
-
                                 document.Add(title);
 
                                 Paragraph bancoOrigen = new Paragraph("BANCO ORIGEN");

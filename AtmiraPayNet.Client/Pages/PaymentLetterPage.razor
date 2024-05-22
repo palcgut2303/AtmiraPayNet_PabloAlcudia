@@ -30,7 +30,7 @@
         <div class="card-body">
             <div class="form-group">
                 <label for="cuentaOrigen">Cuenta Origen (formato IBAN)</label>
-                <InputText class="form-control" readonly=@(isGenerate)
+                <InputText id="OriginAccountIBAN" class="form-control" readonly=@(isGenerate)
                            title="Ingrese un IBAN válido"
                            placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.OriginAccountIBAN"
                            oninput="" />
@@ -40,7 +40,7 @@
             <div class="form-group">
                 <label for="nombreBancoOrigen">Nombre Banco Origen</label>
 
-                <InputText id="nombreBancoOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
+                <InputText id="OriginBankName" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.OriginBankName" />
                 <ValidationMessage For="@(() => paymentLetterModel.OriginBankName)" />
 
             </div>
@@ -54,9 +54,9 @@
                 }
                 else
                 {
-                    <select class="form-control" @onchange="OnCountrySelectedOrigin" value="@selectedCountryOrigin">
+                    <select id="OriginCountryBank" class="form-control" @onchange="OnCountrySelectedOrigin" value="@selectedCountryOrigin">
 
-                        <option value="">Selecciona un país</option>
+                        <option id="OriginCountryBank" value="">Selecciona un país</option>
                         @foreach (var country in countries)
                         {
                             <option value="@country.name.common">@country.name.common</option>
@@ -105,33 +105,33 @@
         </div>
         <div class="card-body">
             <div class="form-group">
-                <label for="cpOficinaOrigen">CP Oficina Origen</label>
+                <label for="CP">CP Oficina Origen</label>
 
-                <InputText id="cpOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.CP" />
+                <InputText id="CP" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.CP" />
                 <ValidationMessage For="@(() => paymentLetterModel.CP)" />
             </div>
 
             <div class="form-group">
-                <label for="calleOficinaOrigen">Calle Oficina Origen</label>
+                <label for="Street">Calle Oficina Origen</label>
 
-                <InputText id="calleOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.Street" />
+                <InputText id="Street" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.Street" />
                 <ValidationMessage For="@(() => paymentLetterModel.Street)" />
             </div>
 
             <div class="form-group">
-                <label for="numeroCalleOficinaOrigen">Número de calle Oficina Origen</label>
+                <label for="NumberStreet">Número de calle Oficina Origen</label>
 
-                <InputNumber id="numeroCalleOficinaOrigen" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
+                <InputNumber id="NumberStreet" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.NumberStreet" />
                 <ValidationMessage For="@(() => paymentLetterModel.NumberStreet)" />
 
 
             </div>
 
             <div class="form-group">
-                <label for="cantidadPago">Cantidad del Pago</label>
+                <label for="PayAmount">Cantidad del Pago</label>
 
 
-                <InputNumber id="cantidadPago" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
+                <InputNumber id="PayAmount" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.PayAmount" />
 
                 <ValidationMessage For="@(() => paymentLetterModel.PayAmount)" />
 
@@ -145,9 +145,9 @@
         </div>
         <div class="card-body">
             <div class="form-group">
-                <label for="cuentaDestinatario">Cuenta Destinatario (formato IBAN)</label>
+                <label for="DestinationAccountIBAN">Cuenta Destinatario (formato IBAN)</label>
 
-                <InputText class="form-control" readonly=@(isGenerate)
+                <InputText id="DestinationAccountIBAN" class="form-control" readonly=@(isGenerate)
                            title="Ingrese un IBAN válido"
                            placeholder="Ingrese un IBAN" @bind-Value="paymentLetterModel.DestinationAccountIBAN" />
                 <ValidationMessage For="@(() => paymentLetterModel.DestinationAccountIBAN)" />
@@ -156,9 +156,9 @@
             </div>
 
             <div class="form-group">
-                <label for="nombreBancoDestinatario">Nombre Banco Destinatario</label>
+                <label for="DestinationBankName">Nombre Banco Destinatario</label>
 
-                <InputText id="nombreBancoDestinatario" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
+                <InputText id="DestinationBankName" readonly=@(isGenerate) class="form-control" @bind-Value="paymentLetterModel.DestinationBankName" />
                 <ValidationMessage For="@(() => paymentLetterModel.DestinationBankName)" />
 
 
@@ -174,7 +174,7 @@
                 }
                 else
                 {
-                    <select class="form-control" @onchange="OnCountrySelectedDestination" value="@selectedCountryDestination">
+                    <select id="DestinationCountryBank" class="form-control" @onchange="OnCountrySelectedDestination" value="@selectedCountryDestination">
 
                         <option value="">Selecciona un país</option>
                         @foreach (var country in countries)
@@ -228,14 +228,14 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="cuentaIntermediaria">Cuenta Intermediaria (formato IBAN)</label>
-                        <InputText id="cuentaIntermediaria" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
+                        <label for="InterBankAccountIBAN">Cuenta Intermediaria (formato IBAN)</label>
+                        <InputText id="InterBankAccountIBAN" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankAccountIBAN" />
                         <ValidationMessage For="@(() => paymentLetterModel.InterBankAccountIBAN)" />
                     </div>
 
                     <div class="form-group">
-                        <label for="nombreBancoIntermediario">Nombre Banco Intermediario</label>
-                        <InputText id="nombreBancoIntermediario" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
+                        <label for="InterBankName">Nombre Banco Intermediario</label>
+                        <InputText id="InterBankName" readonly="readonly" class="form-control" @bind-Value="paymentLetterModel.InterBankName" />
                         <ValidationMessage For="@(() => paymentLetterModel.InterBankName)" />
                     </div>
                 </div>
@@ -281,8 +281,8 @@
     else
     {
         <div class="mt-2 mb-2">
-            <button type="submit" class="btn" style="background-color: rgb(222, 29, 122); color: white;" @onclick="@(()=>Submit("GENERADO"))">Generar</button>
-            <button class="btn btn-secondary" @onclick="@(()=>Submit("BORRADOR"))">Guardar Borrador</button>
+            <button id="btnGenerar" type="submit" class="btn" style="background-color: rgb(222, 29, 122); color: white;" @onclick="@(()=>Submit("GENERADO"))">Generar</button>
+            <button id="btnBorrador" class="btn btn-secondary" @onclick="@(()=>Submit("BORRADOR"))">Guardar Borrador</button>
         </div>
     }
 
@@ -423,6 +423,7 @@
             paymentLetterModel.OriginCountryBank = selectedCountryOrigin;
             paymentLetterModel.DestinationCountryBank = selectedCountryDestination;
         }
+
 
 
         if (idPayment != 0)

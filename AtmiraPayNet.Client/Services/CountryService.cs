@@ -34,9 +34,6 @@ namespace AtmiraPayNet.Client.Services
                 return null;
             }
 
-            ////List<CountryInfo> repos;
-            ////    repos = System.Text.Json.JsonSerializer.Deserialize<List<CountryInfo>>(GetMockJson());
-            ////    return repos;
 
         }
 
