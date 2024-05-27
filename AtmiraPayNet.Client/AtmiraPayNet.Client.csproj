@@ -7,15 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\Data\**" />
     <Compile Remove="wwwroot\pdf\**" />
+    <Content Remove="wwwroot\Data\**" />
     <Content Remove="wwwroot\pdf\**" />
+    <EmbeddedResource Remove="wwwroot\Data\**" />
     <EmbeddedResource Remove="wwwroot\pdf\**" />
+    <None Remove="wwwroot\Data\**" />
     <None Remove="wwwroot\pdf\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="APICountries.json" />
-    <Content Remove="wwwroot\Data\APICountries.json" />
     <Content Remove="wwwroot\HomeBankImg.png" />
   </ItemGroup>
 
@@ -36,9 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="wwwroot\Data\APICountries.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="wwwroot\images\HomeBankImg.png" />
   </ItemGroup>
 

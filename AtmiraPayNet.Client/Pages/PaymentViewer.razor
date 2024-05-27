@@ -1,5 +1,6 @@
 ﻿@page "/paymentletterview"
 
+@using Microsoft.AspNetCore.Components.WebAssembly
 
 @inject IPaymentLetterService paymentLetterService
 @inject IJSRuntime JSRuntime
@@ -88,6 +89,8 @@
     ResponseAPI<List<PaymentListAttribute>> resultList = new ResponseAPI<List<PaymentListAttribute>>();
     List<PaymentListAttribute> listPayment = new List<PaymentListAttribute>();
 
+    string folderPath = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         resultList = await paymentLetterService.GetAttributePayment();
@@ -97,13 +100,41 @@
 
     private async Task DownloadPDF(int id)
     {
+
         var result = await paymentLetterService.GetPDFString(id);
         var model = result.Value!;
+
+
         if (result.Successful)
         {
-            await JSRuntime.InvokeVoidAsync("downloadFile", new object[] {model,id.ToString()  });
+            
+                await JSRuntime.InvokeVoidAsync("downloadFile", new object[] { model, id.ToString() });
+           
+
+
         }
     }
+
+    // private async Task SelectFolder()
+    // {
+    //     await JSRuntime.InvokeVoidAsync("customFunctions.selectFolder", DotNetObjectReference.Create(this));
+
+
+    // }
+
+    // [JSInvokable]
+    // public async Task FolderSelected(string folderPath)
+    // {
+    //     // Aquí puedes manejar la lógica con la ruta de la carpeta seleccionada
+    //     Console.WriteLine($"Carpeta seleccionada: {folderPath}");
+
+    //     this.folderPath = folderPath;
+
+    //     await DownloadPDF(this.folderPath);
+
+    }
+
+    
 
    
 
