@@ -17,6 +17,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Banco Origen</th>
                 <th>Banco Beneficiario</th>
                 <th>Cantidad</th>
@@ -52,6 +53,7 @@
                 @foreach (var payment in listPayment)
                 {
                     <tr>
+                        <td>@payment.Id</td>
                         <td>@payment.OriginBankName</td>
                         <td>@payment.DestinationBankName</td>
                         <td>@payment.PayAmount</td>
